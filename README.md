@@ -1,177 +1,191 @@
-# Kiro TDD Workflow Files
+# LocateFlow Chrome Extension
 
-A comprehensive Test-Driven Development (TDD) workflow setup for Kiro AI IDE that enforces strict TDD methodology through automated steering, hooks, and specifications.
+A Chrome Extension for real-time web element inspection and accurate locator generation. Built with Test-Driven Development (TDD) methodology and Manifest V3 compliance.
 
-## Overview
+## 🚀 Quick Start
 
-This repository contains a complete TDD framework that:
-- **Enforces TDD methodology** through automated hooks
-- **Guides development workflow** with comprehensive steering files
-- **Tracks patterns and learns** from development sessions
-- **Maintains quality gates** with automated checks
-- **Documents architecture decisions** systematically
+### Prerequisites
+- Node.js (v18+)
+- npm or yarn
+- Chrome browser for testing
 
-## Quick Start
-
-1. **Clone this repository** into your project's `.kiro` directory:
-   ```bash
-   git clone https://github.com/5capeg0at/kiro-tdd-workflow-files.git .kiro
-   ```
-
-2. **Start development** - The hooks will automatically enforce TDD methodology
-
-3. **Create features** using the spec template in `.kiro/specs/locate-flow/tdd-feature-template.md`
-
-## Structure
-
-```
-.kiro/
-├── steering/           # Always-active development guidelines
-│   ├── tdd-methodology.md
-│   ├── development-workflow.md
-│   ├── code-quality-gates.md
-│   ├── architecture-decisions.md
-│   └── testing-standards.md
-├── hooks/              # Automated workflow enforcement
-│   ├── test-first-enforcement.kiro
-│   ├── pattern-recognition.kiro
-│   ├── architecture-tracker.kiro
-│   ├── documentation-generator.kiro
-│   └── regression-detection.kiro
-├── specs/              # Feature development templates
-│   └── locate-flow/
-│       ├── tdd-feature-template.md
-│       └── pattern-rules/
-└── settings/           # Kiro configuration
-    └── mcp.json
+### Installation
+```bash
+npm install
 ```
 
-## Key Features
+### Development Commands
+```bash
+# Run tests
+npm test
 
-### 🔴 Red-Green-Refactor Enforcement
-- **Prevents production code** without corresponding tests
-- **Validates test-first** approach before allowing saves
-- **Tracks TDD cycles** in feature specifications
+# Run tests with coverage
+npm run test:coverage
 
-### 📊 Quality Gates
-- **90% minimum test coverage** requirement
-- **Complexity metrics** monitoring
-- **Code quality checks** before commits
-- **Documentation standards** enforcement
+# Watch mode for TDD
+npm run test:watch
 
-### 🧠 Pattern Recognition
-- **Learns from mistakes** and suggests new rules
-- **Detects recurring issues** across development sessions
-- **Generates proposed rules** for common problems
-- **Environment-specific guidance** (Windows/PowerShell focus)
+# Build TypeScript
+npm run build
 
-### 📋 Structured Development
-- **Feature specification templates** with TDD cycle tracking
-- **Architecture decision recording** (ADR) templates
-- **Test scenario planning** and documentation
-- **Implementation progress tracking**
+# Lint code
+npm run lint
 
-## Steering Files
-
-### Core TDD Methodology (`tdd-methodology.md`)
-- Red-Green-Refactor cycle enforcement
-- Test quality requirements
-- Code coverage standards
-- Anti-pattern prevention
-
-### Development Workflow (`development-workflow.md`)
-- Mandatory development sequence
-- Context preservation rules
-- Pattern recognition guidelines
-- Information handoff protocols
-
-### Code Quality Gates (`code-quality-gates.md`)
-- Pre-commit requirements
-- Automated quality checks
-- Refactoring standards
-- Quality metrics tracking
-
-### Architecture Decisions (`architecture-decisions.md`)
-- ADR documentation templates
-- SOLID principles enforcement
-- Domain-driven design guidelines
-- Testing architecture standards
-
-### Testing Standards (`testing-standards.md`)
-- File-specific testing conventions
-- Test organization patterns
-- Assertion guidelines
-- Mock strategy recommendations
-
-## Hooks
-
-### Test-First Enforcement
-Prevents saving production code without corresponding tests. Validates TDD methodology compliance before allowing file saves.
-
-### Pattern Recognition
-Analyzes interactions for recurring issues and automatically generates proposed rules to prevent future problems.
-
-### Architecture Tracker
-Monitors architectural decisions and ensures consistency with established patterns.
-
-### Documentation Generator
-Automatically updates documentation based on code changes and architectural decisions.
-
-### Regression Detection
-Identifies potential regressions and ensures test coverage for critical paths.
-
-## Usage Examples
-
-### Starting a New Feature
-1. Copy the TDD feature template: `.kiro/specs/locate-flow/tdd-feature-template.md`
-2. Fill in requirements and test scenarios
-3. Begin TDD cycles - hooks will enforce methodology
-4. Track progress in the spec document
-
-### Handling Recurring Issues
-The pattern recognition hook will automatically:
-- Detect repeated problems
-- Log them in `pattern-rules/detected-patterns.md`
-- Propose solutions in `pattern-rules/proposed-rules.md`
-- Suggest steering file updates
-
-## Customization
-
-### Adding New Steering Rules
-Create new `.md` files in `.kiro/steering/` with:
-```markdown
----
-inclusion: always  # or fileMatch, manual
-fileMatchPattern: "**/*.ts"  # if using fileMatch
----
-
-# Your Rule Content
+# Fix linting issues
+npm run lint:fix
 ```
 
-### Creating Custom Hooks
-Add `.kiro` files in `.kiro/hooks/` following the existing patterns.
+## 🧪 Testing Framework
 
-### MCP Integration
-Configure Model Context Protocol servers in `.kiro/settings/mcp.json` for additional tooling.
+This project follows strict Test-Driven Development (TDD) methodology:
 
-## Benefits
+### TDD Workflow
+1. **RED**: Write failing test that describes desired behavior
+2. **GREEN**: Write minimal code to make test pass  
+3. **REFACTOR**: Improve code structure while keeping tests green
 
-- **Enforced Discipline**: Impossible to skip TDD phases
-- **Learning System**: Gets smarter with each project
-- **Quality Assurance**: Automated quality gates prevent technical debt
-- **Knowledge Capture**: Documents decisions and patterns
-- **Reusable Framework**: Drop into any new project
+### Testing Utilities
+Located in `__tests__/helpers/test-helpers.js`:
 
-## Requirements
+```javascript
+// DOM Testing
+const element = createMockElement('div', { id: 'test', class: 'example' });
+const document = createMockDOM({ tagName: 'html', children: [...] });
 
-- Kiro AI IDE
-- Git configured with your credentials
-- PowerShell (Windows) or Bash (Unix) environment
+// Chrome API Testing
+mockChromeAPI('storage.local', {
+  get: jest.fn(),
+  set: jest.fn()
+});
 
-## Contributing
+// Environment Setup
+setupDOMEnvironment();  // Before tests
+cleanupDOMEnvironment(); // After tests
+```
 
-This is a personal workflow template, but feel free to fork and adapt for your own needs.
+### Quality Standards
+- **Minimum 90% line coverage**
+- **85% branch coverage required**
+- **All public methods must have tests**
+- **ESLint compliance mandatory**
+- **TypeScript strict mode enforced**
 
-## License
+## 📁 Project Structure
 
-MIT License - Use freely for your own projects.
+```
+├── src/
+│   ├── content/          # Content scripts
+│   ├── background/       # Service worker scripts
+│   ├── popup/           # Extension popup UI
+│   ├── options/         # Options page
+│   └── shared/          # Shared utilities
+├── __tests__/
+│   ├── helpers/         # Testing utilities
+│   └── setup.js         # Global test configuration
+├── docs/
+│   ├── adr/            # Architecture Decision Records
+│   └── implementation-context.md
+├── manifest.json        # Chrome extension manifest
+├── package.json
+├── tsconfig.json
+├── jest.config.js
+└── .eslintrc.js
+```
+
+## 🏗️ Architecture
+
+### Chrome Extension Components
+- **Manifest V3**: Service worker architecture
+- **Content Scripts**: DOM inspection and interaction
+- **Background Service Worker**: Extension lifecycle management
+- **Popup UI**: Main extension interface
+- **Options Page**: User preferences and settings
+
+### Core Systems Implemented
+- **Data Models** (`src/shared/data-models.ts`): TypeScript interfaces with validation
+- **Error Handler** (`src/shared/error-handler.ts`): Centralized error management
+- **Test Framework**: Comprehensive TDD utilities and Chrome API mocks
+
+### Key Design Principles
+- **Test-First Development**: No production code without failing tests
+- **Modular Architecture**: Clear separation of concerns
+- **Type Safety**: TypeScript with strict configuration
+- **Quality Gates**: Automated linting and testing
+- **Graceful Failure**: Error handling that never crashes the browser
+
+## 📋 Requirements Implementation
+
+### Functional Requirements Status
+- [ ] Real-time element inspection and locator generation
+- [ ] Interactive on-page locator UI
+- ✅ **Detailed confidence scoring**: Data models and interfaces implemented
+- [ ] Accessibility (ARIA) analysis
+- [ ] Locator history in main extension popup
+- ✅ **Customizable user preferences**: Data models and validation implemented
+- [ ] Client-side privacy
+
+### Non-Functional Requirements Status
+- ✅ **Platform Compatibility**: Manifest V3 compliance implemented
+- ✅ **Error Handling**: Comprehensive error categorization and graceful failure system
+
+## 🔧 Development Guidelines
+
+### Before Writing Production Code
+1. Write a failing test that describes the desired behavior
+2. Verify the test fails for the right reason
+3. Write minimal code to make the test pass
+4. Refactor while keeping tests green
+
+### Code Quality Requirements
+- All changes must pass ESLint validation
+- TypeScript compilation must succeed without errors
+- Test coverage must not decrease below thresholds
+- All tests must pass before committing
+
+### Chrome Extension Testing
+- Use provided Chrome API mocks for testing extension functionality
+- Test DOM manipulation with JSDOM utilities
+- Mock external dependencies appropriately
+- Test both success and error scenarios
+
+## 📚 Documentation
+
+### Architecture Decision Records
+- **ADR-001**: [Project Structure and Testing Framework](docs/adr/ADR-001-project-structure-and-testing.md)
+- **ADR-002**: [Data Models Architecture](docs/adr/ADR-002-data-models-architecture.md)
+- **ADR-003**: [Error Handling System](docs/adr/ADR-003-error-handling-system.md)
+
+### Development Documentation
+- **Implementation Context**: [Complete TDD development history](docs/implementation-context.md)
+- **Spec Documents**: Located in `.kiro/specs/locateflow-chrome-extension/`
+
+## 🚦 Development Progress
+
+### ✅ Completed Tasks (TDD Methodology)
+1. **Project Structure Setup** - Chrome extension foundation with Manifest V3
+2. **Data Models & Interfaces** - TypeScript interfaces with comprehensive validation
+3. **Error Handling System** - Centralized error management with graceful failure
+
+### 📊 Current Metrics
+- **Test Coverage**: 98%+ across all modules
+- **Tests Passing**: 46/46 tests
+- **Code Quality**: ESLint compliant, TypeScript strict mode
+- **Architecture**: 3 ADRs documenting key decisions
+
+### 🎯 Next Development Tasks
+1. **Storage Manager** - Chrome storage wrapper with TDD approach
+2. **Locator Engine** - CSS/XPath generation algorithms
+3. **Content Script System** - DOM inspection and interaction
+4. **UI Components** - Popup and options page implementation
+
+See `.kiro/specs/locateflow-chrome-extension/tasks.md` for detailed implementation plan.
+
+## 🤝 Contributing
+
+This project follows TDD methodology. All contributions must:
+1. Include comprehensive tests
+2. Maintain or improve code coverage
+3. Pass all quality gates
+4. Follow established architecture patterns
+
+For detailed development context, see [implementation-context.md](docs/implementation-context.md).

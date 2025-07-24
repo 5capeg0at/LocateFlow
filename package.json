@@ -1,0 +1,33 @@
+{
+    "name": "locateflow-chrome-extension",
+    "version": "1.0.0",
+    "description": "Chrome extension for LocateFlow - DOM element location and interaction",
+    "main": "dist/background.js",
+    "scripts": {
+        "test": "jest",
+        "test:watch": "jest --watch",
+        "test:coverage": "jest --coverage",
+        "build": "tsc",
+        "lint": "eslint src/**/*.ts",
+        "lint:fix": "eslint src/**/*.ts --fix"
+    },
+    "devDependencies": {
+        "@types/chrome": "^0.0.254",
+        "@types/jest": "^29.5.8",
+        "@typescript-eslint/eslint-plugin": "^6.21.0",
+        "@typescript-eslint/parser": "^6.21.0",
+        "eslint": "^8.54.0",
+        "jest": "^29.7.0",
+        "jest-environment-jsdom": "^29.7.0",
+        "jsdom": "^23.0.1",
+        "ts-jest": "^29.4.0",
+        "typescript": "^5.3.0"
+    },
+    "keywords": [
+        "chrome-extension",
+        "dom",
+        "automation"
+    ],
+    "author": "LocateFlow Team",
+    "license": "MIT"
+}
