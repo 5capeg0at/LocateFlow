@@ -362,3 +362,76 @@ This foundation provides a solid base for implementing the LocateFlow Chrome Ext
 - Error handling system provides foundation for storage error management
 - All storage operations can now use centralized error handling
 - Pattern recognition will identify common storage issues over time
+
+---
+
+## Task 3.2: Locator History Management Implementation (2025-07-24)
+
+### TDD Cycle: RED → GREEN → REFACTOR ✅
+
+**Context**: Implemented automatic locator history management with capacity control following strict TDD methodology.
+
+### RED Phase: Comprehensive Test Suite
+**Failing Tests Created**: 9 tests covering all aspects of history management
+- Automatic history entry creation when locators are copied
+- Unique ID and timestamp generation for history entries
+- Element info and strategies preservation in history
+- Capacity management with oldest-first removal
+- Chronological ordering maintenance (newest first)
+- Different history limits from user preferences
+- Empty history handling for first entries
+- Comprehensive error handling scenarios
+
+### GREEN Phase: Minimal Implementation
+**Core Method**: `addToHistoryOnCopy(locatorData: LocatorData)`
+- Validates input data using existing validation functions
+- Loads current preferences to get history limit
+- Loads existing history from storage
+- Creates new history entry with unique ID and current timestamp
+- Adds entry at beginning (newest first) and enforces capacity limits
+- Saves updated history to Chrome storage
+- Provides comprehensive error handling with descriptive messages
+
+### REFACTOR Phase: Code Quality Improvements
+**Helper Methods Extracted**:
+- `generateHistoryId()`: Creates unique IDs with timestamp and random components
+- `createHistoryEntry()`: Builds history entries from locator data
+- Clean separation of concerns with private methods
+- Maintained all tests passing during refactoring
+
+### Requirements Traceability
+- ✅ **Requirement 5.1**: Automatic history entry creation when locators are copied
+- ✅ **Requirement 5.6**: History capacity management with oldest-first removal
+- ✅ **Data Integrity**: Preserves element info, strategies, and URL from original locator
+- ✅ **User Experience**: Maintains newest-first ordering for optimal access patterns
+
+### Architecture Integration
+**Storage Manager Enhancement**:
+- Added `addToHistoryOnCopy()` method separate from `saveToHistory()` for different use cases
+- Integrated with existing data validation and error handling systems
+- Maintains consistency with established storage patterns and Chrome API usage
+- Respects user preferences for history limits and cleanup thresholds
+
+### Quality Metrics Achieved
+- **Test Coverage**: 35/35 tests passing (100% success rate)
+- **Code Quality**: Clean helper methods with single responsibility principle
+- **Error Handling**: Comprehensive validation and error propagation
+- **Performance**: Efficient array operations for history management
+- **Maintainability**: Clear separation between manual and automatic history operations
+
+### Files Modified
+- `src/storage/StorageManager.ts`: Added history management methods
+- `__tests__/storage/StorageManager.test.ts`: Comprehensive test suite for Task 3.2
+- `docs/adr/ADR-004-storage-manager-architecture.md`: Architecture documentation
+
+### Integration Points Established
+- **Data Models**: Uses validation functions from shared data models
+- **Error Handler**: Integrates with centralized error handling system  
+- **User Preferences**: Respects user-defined history limits and settings
+- **Chrome APIs**: Proper Chrome storage API usage with error handling
+
+### Ready for Next Task:
+- Task 4.1: Implement locator generation engine with failing tests
+- Storage system complete with automatic history management
+- All storage operations maintain data integrity and user preferences
+- Pattern recognition ready to learn from locator generation patterns

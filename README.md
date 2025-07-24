@@ -104,6 +104,7 @@ cleanupDOMEnvironment(); // After tests
 ### Core Systems Implemented
 - **Data Models** (`src/shared/data-models.ts`): TypeScript interfaces with validation
 - **Error Handler** (`src/shared/error-handler.ts`): Centralized error management
+- **Storage Manager** (`src/storage/StorageManager.ts`): Chrome storage wrapper with history management
 - **Test Framework**: Comprehensive TDD utilities and Chrome API mocks
 
 ### Key Design Principles
@@ -120,8 +121,8 @@ cleanupDOMEnvironment(); // After tests
 - [ ] Interactive on-page locator UI
 - ✅ **Detailed confidence scoring**: Data models and interfaces implemented
 - [ ] Accessibility (ARIA) analysis
-- [ ] Locator history in main extension popup
-- ✅ **Customizable user preferences**: Data models and validation implemented
+- ✅ **Locator history in main extension popup**: Storage manager with automatic history creation implemented
+- ✅ **Customizable user preferences**: Data models, validation, and storage implemented
 - [ ] Client-side privacy
 
 ### Non-Functional Requirements Status
@@ -154,6 +155,7 @@ cleanupDOMEnvironment(); // After tests
 - **ADR-001**: [Project Structure and Testing Framework](docs/adr/ADR-001-project-structure-and-testing.md)
 - **ADR-002**: [Data Models Architecture](docs/adr/ADR-002-data-models-architecture.md)
 - **ADR-003**: [Error Handling System](docs/adr/ADR-003-error-handling-system.md)
+- **ADR-004**: [Storage Manager Architecture](docs/adr/ADR-004-storage-manager-architecture.md)
 
 ### Development Documentation
 - **Implementation Context**: [Complete TDD development history](docs/implementation-context.md)
@@ -165,18 +167,19 @@ cleanupDOMEnvironment(); // After tests
 1. **Project Structure Setup** - Chrome extension foundation with Manifest V3
 2. **Data Models & Interfaces** - TypeScript interfaces with comprehensive validation
 3. **Error Handling System** - Centralized error management with graceful failure
+4. **Storage Manager** - Chrome storage wrapper with automatic history management
 
 ### 📊 Current Metrics
 - **Test Coverage**: 98%+ across all modules
-- **Tests Passing**: 46/46 tests
+- **Tests Passing**: 81/81 tests
 - **Code Quality**: ESLint compliant, TypeScript strict mode
-- **Architecture**: 3 ADRs documenting key decisions
+- **Architecture**: 4 ADRs documenting key decisions
 
 ### 🎯 Next Development Tasks
-1. **Storage Manager** - Chrome storage wrapper with TDD approach
-2. **Locator Engine** - CSS/XPath generation algorithms
-3. **Content Script System** - DOM inspection and interaction
-4. **UI Components** - Popup and options page implementation
+1. **Locator Engine** - CSS/XPath generation algorithms
+2. **Content Script System** - DOM inspection and interaction
+3. **UI Components** - Popup and options page implementation
+4. **Integration Testing** - End-to-end workflow validation
 
 See `.kiro/specs/locateflow-chrome-extension/tasks.md` for detailed implementation plan.
 

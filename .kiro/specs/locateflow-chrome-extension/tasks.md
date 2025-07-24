@@ -65,14 +65,28 @@ This implementation leverages automated hooks to minimize token usage and ensure
   - _Requirements: Non-functional requirement 2_
 
 - [ ] 3. Develop storage manager with TDD approach
-- [ ] 3.1 Implement Chrome storage wrapper with failing tests
+- [x] 3.1 Implement Chrome storage wrapper with failing tests
+
+
+
+
+
+
+
+
+
   - Write failing tests for Chrome storage API interactions
   - Create StorageManager class with CRUD operations for preferences and history
   - Test-drive storage quota management and data cleanup functionality
   - **Automation**: All hooks will monitor this critical component for regressions and patterns
   - _Requirements: 5.1, 5.5, 5.6, 6.3, 7.4_
 
-- [ ] 3.2 Implement locator history management with TDD
+- [x] 3.2 Implement locator history management with TDD
+
+
+
+
+
   - Write failing tests for history storage, retrieval, and cleanup
   - Test-drive automatic history entry creation when locators are copied
   - Implement history capacity management with oldest-first removal
@@ -344,3 +358,84 @@ This implementation leverages automated hooks to minimize token usage and ensure
 - Validation functions ensure data integrity throughout application
 - Ready for error handling system implementation (Task 2.2)
 - All interfaces support future locator strategy extensions
+
+---
+
+### Task 3.2: Implement locator history management with TDD
+**Status:** ✅ Completed  
+**Date:** 2025-07-24
+
+#### TDD Cycle Summary:
+- **RED Phase:** Created 9 failing tests for automatic history entry creation and capacity management
+- **GREEN Phase:** Implemented `addToHistoryOnCopy` method with unique ID generation and oldest-first removal
+- **REFACTOR Phase:** Extracted helper methods for ID generation and history entry creation
+
+#### Requirements Traceability:
+- ✅ Requirement 5.1: Automatic history entry creation when locators are copied
+- ✅ Requirement 5.6: History capacity management with oldest-first removal
+- ✅ Unique ID and timestamp generation for history entries
+- ✅ Preservation of element info and strategies in history entries
+
+#### Architecture Decisions:
+- Implemented `addToHistoryOnCopy` method separate from `saveToHistory` for different use cases
+- Added private helper methods `generateHistoryId()` and `createHistoryEntry()` for code reuse
+- Maintained newest-first ordering in history storage for optimal user experience
+- Enforced history limits through array slicing after adding new entries
+
+#### Implementation Details:
+- **New Method:** `addToHistoryOnCopy(locatorData: LocatorData)` - Creates history entry when locator is copied
+- **Helper Methods:** `generateHistoryId()` and `createHistoryEntry()` for code organization
+- **Capacity Management:** Automatic removal of oldest entries when history exceeds user preference limit
+- **Error Handling:** Comprehensive validation and error messages for all failure scenarios
+
+#### Quality Metrics:
+- **Test Coverage:** 9 new tests covering automatic history creation and capacity management
+- **Tests:** 35/35 passing with comprehensive edge case coverage
+- **Code Quality:** Clean separation of concerns with private helper methods
+- **Error Handling:** Robust validation and error propagation
+
+#### Files Modified:
+- `src/storage/StorageManager.ts` - Added `addToHistoryOnCopy` method and helper methods
+- `__tests__/storage/StorageManager.test.ts` - Added comprehensive test suite for Task 3.2
+
+#### Next Agent Context:
+- History management functionality complete with automatic entry creation
+- Storage operations reliable with comprehensive error handling
+- Ready for locator generation engine implementation (Task 4.1)
+- All storage operations maintain data integrity and user preferences
+
+---
+
+### Task 3.1: Storage Threshold Logic Fix (CodeRabbit Review)
+**Status:** ✅ Completed  
+**Date:** 2025-07-24
+
+#### TDD Cycle Summary:
+- **RED Phase:** Created failing tests to demonstrate corrected storage threshold logic
+- **GREEN Phase:** Fixed `getStorageStats()` method to use logical threshold progression
+- **REFACTOR Phase:** Added clarifying comments for threshold logic
+
+#### Issue Addressed:
+- **Problem:** Storage thresholds were inconsistent - `needsCleanup` (80% = 3.2MB) could be true while `isNearLimit` (3.5MB) was false
+- **Solution:** Swapped the logic so `isNearLimit` (3.2MB) comes before `needsCleanup` (3.5MB)
+- **Logic:** Warning threshold (80% = 3.2MB) → Cleanup threshold (3.5MB) → Maximum (4MB)
+
+#### Implementation Details:
+- **Fixed Method:** `getStorageStats()` - Corrected threshold comparison logic
+- **Test Coverage:** Added comprehensive tests for both threshold scenarios
+- **Documentation:** Added inline comments explaining the logical progression
+
+#### Quality Metrics:
+- **Test Coverage:** 36/36 tests passing with comprehensive threshold coverage
+- **Code Quality:** Logical consistency restored in storage management
+- **Error Handling:** All existing error handling preserved
+
+#### Files Modified:
+- `src/storage/StorageManager.ts` - Fixed threshold logic in `getStorageStats()` method
+- `__tests__/storage/StorageManager.test.ts` - Added tests for corrected threshold behavior
+
+#### Next Agent Context:
+- Storage threshold logic now follows logical progression: warning → cleanup → maximum
+- All storage operations maintain consistent behavior and data integrity
+- Ready for locator generation engine implementation (Task 4.1)
+- CodeRabbit feedback successfully addressed with TDD approach

@@ -27,7 +27,9 @@ beforeEach(() => {
     mockChromeAPI('storage.local', {
         get: jest.fn(),
         set: jest.fn(),
-        clear: jest.fn()
+        clear: jest.fn(),
+        remove: jest.fn(),
+        getBytesInUse: jest.fn()
     });
 
     mockChromeAPI('tabs', {
