@@ -1,0 +1,31 @@
+name: "Regression Detection"
+description: "Runs tests and detects regressions on any code change"
+triggers:
+  - event: "file:afterSave"
+    filePattern: "src/**/*.{ts,tsx,js,jsx}"
+
+actions:
+  - type: "agent"
+    prompt: |
+      A source file has been modified. Execute the following regression detection protocol:
+      
+      1. **Run Full Test Suite**: Execute all tests to ensure no regressions
+      2. **Analyze Test Results**: 
+         - Report any failing tests immediately
+         - Identify if failures are related to the recent change
+         - Check test coverage impact
+      3. **Coverage Analysis**:
+         - Verify coverage hasn't decreased
+         - Identify uncovered code paths
+         - Recommend additional tests if needed
+      4. **Performance Check**:
+         - Monitor test execution time
+         - Flag any significant performance regressions
+      
+      If ANY tests fail:
+      - Immediately alert the developer
+      - Provide specific failure details
+      - Suggest corrective actions
+      - Do not allow further development until fixed
+      
+      Generate a concise report of test status and coverage metrics.

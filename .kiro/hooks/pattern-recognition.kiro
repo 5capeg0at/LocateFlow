@@ -1,0 +1,116 @@
+name: "Pattern Recognition and Rule Generation"
+description: "Detects recurring issues and generates proposed spec rules"
+triggers:
+  - event: "chat:message"
+    messagePattern: ".*error.*|.*issue.*|.*problem.*|.*failed.*"
+  - event: "command:executed"
+    exitCode: "non-zero"
+  - event: "file:afterSave"
+    filePattern: "**/*"
+
+actions:
+  - type: "agent"
+    prompt: |
+      PATTERN RECOGNITION ANALYSIS:
+      
+      Analyze the current interaction/error/change for recurring patterns that could be prevented by spec rules:
+      
+      ## Pattern Detection Categories:
+      
+      ### 1. Command/Syntax Errors
+      - Shell command incompatibilities (PowerShell vs Bash)
+      - Incorrect flag usage or syntax
+      - Environment-specific command differences
+      - Path separator issues (Windows vs Unix)
+      
+      ### 2. Code Convention Violations
+      - Naming convention inconsistencies
+      - Import statement patterns
+      - Code formatting deviations
+      - Architecture pattern violations
+      
+      ### 3. Testing Anti-Patterns
+      - Skipping TDD phases
+      - Inadequate test coverage patterns
+      - Test organization issues
+      - Mock usage inconsistencies
+      
+      ### 4. Technology Stack Misuse
+      - Wrong library usage patterns
+      - Deprecated API usage
+      - Performance anti-patterns
+      - Security vulnerability patterns
+      
+      ### 5. Documentation Gaps
+      - Missing API documentation patterns
+      - Incomplete architecture decision recording
+      - Outdated README information
+      - Missing inline comments for complex logic
+      
+      ## Analysis Process:
+      
+      1. **Identify Pattern**: What specific recurring issue occurred?
+      2. **Frequency Check**: Is this the 2nd+ occurrence of this pattern?
+      3. **Root Cause**: What underlying knowledge gap or rule absence caused this?
+      4. **Rule Proposal**: What specific spec rule would prevent this?
+      5. **Implementation**: How should this rule be enforced?
+      
+      ## Output Requirements:
+      
+      If a pattern is detected (especially recurring ones):
+      
+      ### Write to `.kiro/specs/pattern-rules/detected-patterns.md`:
+      ```markdown
+      ## [TIMESTAMP] - Pattern: [Brief Description]
+      
+      **Occurrence Count**: [Number of times seen]
+      **Context**: [Where/when this happens]
+      **Specific Example**: [Exact command/code that failed]
+      **Impact**: [Time lost, confusion caused, etc.]
+      **Root Cause**: [Why this keeps happening]
+      
+      **Proposed Solution**: [Specific rule or guideline]
+      **Enforcement Method**: [How to prevent/catch this]
+      **Priority**: [High/Medium/Low based on frequency and impact]
+      ```
+      
+      ### Write to `.kiro/specs/pattern-rules/proposed-rules.md`:
+      ```markdown
+      ## Rule: [Descriptive Title]
+      
+      **Problem Statement**: [What this rule prevents]
+      **Rule Definition**: [Specific, actionable rule]
+      **Examples**:
+      - ✅ Good: [Correct example]
+      - ❌ Bad: [Incorrect example]
+      **Enforcement**: [How to implement this rule]
+      **Integration**: [Which steering file should contain this]
+      ```
+      
+      ## Special Focus Areas:
+      
+      ### Shell Command Patterns:
+      - PowerShell vs Bash syntax differences
+      - Windows vs Unix path handling
+      - Environment variable access patterns
+      - Command availability across platforms
+      
+      ### Example Pattern Recognition:
+      If you detect: "Agent used `&&` in PowerShell causing syntax error"
+      
+      **Pattern**: PowerShell command chaining syntax error
+      **Frequency**: If this is 2nd+ occurrence
+      **Rule**: "Use `;` for command chaining in PowerShell, `&&` for Bash/Unix shells"
+      **Enforcement**: Add to environment-specific steering file
+      
+      ## Critical Instructions:
+      
+      - ALWAYS log patterns that occur more than once
+      - Focus on actionable, specific rules
+      - Consider enforcement mechanisms (hooks, steering files, specs)
+      - Prioritize high-impact, frequently occurring issues
+      - Make rules technology and environment-specific
+      - Include concrete examples in all rule proposals
+      
+      Only respond with pattern analysis if a genuine recurring pattern is detected.
+      If no significant pattern is found, respond with "No recurring patterns detected."

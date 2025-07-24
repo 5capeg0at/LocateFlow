@@ -1,0 +1,32 @@
+name: "Documentation Generator"
+description: "Automatically updates documentation based on code changes"
+triggers:
+  - event: "file:afterSave"
+    filePattern: "src/**/*.{ts,tsx,js,jsx}"
+
+actions:
+  - type: "agent"
+    prompt: |
+      A source file has been updated. Generate/update the following documentation:
+      
+      1. **API Documentation**: 
+         - Update JSDoc comments for public methods
+         - Document parameter types and return values
+         - Include usage examples for complex APIs
+      
+      2. **Architecture Notes**:
+         - If this change affects system architecture, create/update ADR
+         - Document design decisions and trade-offs
+         - Update component relationship diagrams if needed
+      
+      3. **Test Documentation**:
+         - Ensure test descriptions match implementation
+         - Update test scenarios if behavior changed
+         - Document test data and mock requirements
+      
+      4. **README Updates**:
+         - Update feature lists if new functionality added
+         - Refresh setup instructions if dependencies changed
+         - Update usage examples if APIs modified
+      
+      Focus on maintaining accurate, helpful documentation that supports the next developer working on this code.

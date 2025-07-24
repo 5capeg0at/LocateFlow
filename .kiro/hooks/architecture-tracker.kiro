@@ -1,0 +1,38 @@
+name: "Architecture Decision Tracker"
+description: "Tracks and documents architectural decisions and changes"
+triggers:
+  - event: "file:afterSave"
+    filePattern: "src/**/*.{ts,tsx,js,jsx}"
+
+actions:
+  - type: "agent"
+    prompt: |
+      Analyze the recent code change for architectural implications:
+      
+      1. **Pattern Analysis**:
+         - Does this introduce new architectural patterns?
+         - Are existing patterns being violated or evolved?
+         - Is this consistent with established conventions?
+      
+      2. **Dependency Changes**:
+         - Are new dependencies being introduced?
+         - Do dependency directions follow architectural rules?
+         - Are abstractions being maintained properly?
+      
+      3. **Design Decision Impact**:
+         - Does this change affect previous architectural decisions?
+         - Should any ADRs be updated or superseded?
+         - Are there technical debt implications?
+      
+      4. **Future Considerations**:
+         - How does this change affect system scalability?
+         - Are there maintenance or testing implications?
+         - What refactoring opportunities are created?
+      
+      If significant architectural changes are detected:
+      - Create or update relevant ADR
+      - Flag potential design issues
+      - Suggest improvements or alternatives
+      - Update architecture documentation
+      
+      Maintain architectural coherency and document decisions for future reference.

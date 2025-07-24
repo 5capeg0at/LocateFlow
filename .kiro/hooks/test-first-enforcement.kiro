@@ -1,0 +1,27 @@
+name: "Test-First Enforcement"
+description: "Prevents production code creation without corresponding tests"
+triggers:
+  - event: "file:beforeSave"
+    filePattern: "src/**/*.{ts,tsx,js,jsx}"
+    excludePattern: "**/*.{test,spec}.{ts,tsx,js,jsx}"
+
+actions:
+  - type: "agent"
+    prompt: |
+      CRITICAL: Before allowing this production code to be saved, verify:
+      
+      1. Does a corresponding test file exist for this module?
+      2. Are there specific tests that justify this code change?
+      3. If this is new functionality, are there failing tests that this code will make pass?
+      
+      If ANY of these are false:
+      - REJECT the save operation
+      - Explain what tests need to be written first
+      - Guide the developer to create the required tests
+      
+      Follow TDD methodology strictly:
+      - No production code without failing tests
+      - Tests must be written first
+      - Production code should be minimal to make tests pass
+      
+      Only allow the save if proper tests exist and follow TDD principles.
