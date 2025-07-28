@@ -435,3 +435,422 @@ This foundation provides a solid base for implementing the LocateFlow Chrome Ext
 - Storage system complete with automatic history management
 - All storage operations maintain data integrity and user preferences
 - Pattern recognition ready to learn from locator generation patterns
+---
+
+
+## Task 4.1: CSS Selector Generation Engine Implementation (2025-07-24)
+
+### TDD Cycle: RED → GREEN → REFACTOR ✅
+
+**Context**: Implemented comprehensive CSS selector generation engine with priority-based strategy selection and detailed confidence scoring following strict TDD methodology.
+
+### RED Phase: Comprehensive Test Suite
+**Failing Tests Created**: 20 tests covering all aspects of CSS selector generation
+- ID-based selector generation with high confidence scoring
+- Class-based selector generation with uniqueness validation
+- Hierarchy-based selector building for non-unique elements
+- Attribute-based selectors for form elements
+- Tag-based selectors as fallback strategy
+- Uniqueness validation using DOM querying
+- Stability scoring for different selector types
+- Confidence scoring with detailed factor analysis
+- Auto-generated class name detection and warnings
+- Error handling for null elements and documents
+- Integration with LocatorStrategy interface
+
+### GREEN Phase: Minimal Implementation
+**Core Class**: `CSSelectorGenerator` with comprehensive selector generation
+- **Priority Strategy**: ID → Attributes → Classes → Hierarchy → Tag (fallback)
+- **Uniqueness Validation**: Real-time DOM querying with `document.querySelectorAll()`
+- **Stability Scoring**: Algorithm considering selector type, auto-generated patterns, position-based elements
+- **Confidence Assessment**: Multi-factor scoring with detailed explanations and warnings
+- **Optimization Features**: Auto-generated class detection, hierarchy building for non-unique selectors
+
+### REFACTOR Phase: Code Quality Improvements
+**Documentation Enhancement**:
+- Enhanced file header with implementation strategy details
+- Added comprehensive JSDoc documentation with usage examples
+- Improved code organization with clear method separation
+- Maintained all tests passing during refactoring
+
+### Requirements Traceability
+- ✅ **Requirement 2.1**: CSS locator generation strategy with priority-based approach
+- ✅ **Requirement 3.2**: Confidence scoring for locator reliability with detailed factors
+- ✅ **Requirement 3.4**: Uniqueness validation and stability assessment
+
+### Architecture Integration
+**CSS Selector Generation Engine**:
+- Integrates with shared data models (`LocatorStrategy`, `ConfidenceScore`)
+- Compatible with Chrome extension content script environment
+- Supports future locator strategy aggregation systems
+- Uses native DOM APIs for maximum compatibility
+
+### Quality Metrics Achieved
+- **Test Coverage**: 95.37% line coverage (exceeds 90% requirement)
+- **Tests**: 20/20 passing with comprehensive edge case coverage
+- **Code Quality**: ESLint compliant, follows SOLID principles
+- **Error Handling**: Robust validation for null elements and documents
+
+### Files Created
+- `src/shared/css-selector-generator.ts`: CSS selector generation engine
+- `__tests__/shared/css-selector-generator.test.ts`: Comprehensive test suite with 20 test cases
+- `docs/adr/ADR-005-css-selector-generation-engine.md`: Architecture decision record
+
+### Integration Points Established
+- **Data Models**: Uses `LocatorStrategy` and `ConfidenceScore` interfaces
+- **DOM Integration**: Native DOM API usage for selector validation
+- **Error Handling**: Comprehensive validation and error messages
+- **Future Extensions**: Foundation for additional locator strategy implementations
+
+### Ready for Next Task:
+- Task 4.2: Implement XPath locator generation with TDD
+- CSS selector generation engine complete with priority-based strategy selection
+- Confidence scoring provides detailed reliability assessment for users
+- Foundation established for multi-strategy locator generation system
+
+---
+
+## Task 4.2: XPath Expression Generation Engine Implementation (2025-07-24)
+
+### TDD Cycle: RED → GREEN → REFACTOR ✅
+
+**Context**: Implemented comprehensive XPath expression generation engine with native browser XPath evaluation and optimization features following strict TDD methodology.
+
+### RED Phase: Comprehensive Test Suite
+**Failing Tests Created**: 26 tests covering all aspects of XPath expression generation
+- ID-based XPath generation with high confidence scoring
+- Attribute-based XPath for form elements and data attributes
+- Class-based XPath with contains() functions and multi-class support
+- Text content-based XPath for button and link elements
+- Position-based XPath with sibling calculation
+- Absolute XPath as fallback strategy
+- XPath uniqueness validation using `document.evaluate()`
+- XPath-specific stability scoring algorithm
+- Confidence scoring with XPath-specific factors and warnings
+- XPath optimization for shorter expressions when equally reliable
+- Error handling for XPath evaluation failures
+- Integration with LocatorStrategy interface
+
+### GREEN Phase: Minimal Implementation
+**Core Class**: `XPathGenerator` with comprehensive XPath expression generation
+- **Priority Strategy**: ID → Attributes → Classes → Text → Position → Absolute (fallback)
+- **DOM Integration**: Native browser XPath evaluation with `XPathResult.ORDERED_NODE_SNAPSHOT_TYPE`
+- **Optimization Algorithm**: Shorter expressions preferred when equally reliable, position-based penalties
+- **Stability Assessment**: Comprehensive scoring considering expression type and fragility factors
+- **Advanced Features**: Multi-class combination with `and` operators, sibling position calculation
+
+### REFACTOR Phase: Code Quality Improvements
+**Documentation Enhancement**:
+- Enhanced file header with XPath expression examples and optimization features
+- Added comprehensive JSDoc documentation with XPath pattern examples
+- Improved code organization with clear strategy separation
+- Maintained all tests passing during refactoring
+
+### Requirements Traceability
+- ✅ **Requirement 2.1**: XPath locator generation strategy with comprehensive expression types
+- ✅ **Requirement 3.2**: Confidence scoring for XPath reliability with detailed factor analysis
+- ✅ **Requirement 3.4**: XPath uniqueness validation using `document.evaluate()` and stability assessment
+
+### Architecture Integration
+**XPath Expression Generation Engine**:
+- Uses native browser XPath evaluation for maximum compatibility
+- Integrates with shared data models (`LocatorStrategy`, `ConfidenceScore`)
+- Compatible with Chrome extension content script environment
+- Supports aggregation with other locator generation strategies
+
+### Quality Metrics Achieved
+- **Test Coverage**: 96.09% line coverage (exceeds 90% requirement)
+- **Tests**: 26/26 passing with comprehensive XPath scenario coverage
+- **Code Quality**: ESLint compliant, follows clean code principles
+- **Error Handling**: Graceful XPath evaluation error handling
+
+### Files Created
+- `src/shared/xpath-generator.ts`: XPath expression generation engine
+- `__tests__/shared/xpath-generator.test.ts`: Comprehensive test suite with 26 test cases
+- `docs/adr/ADR-006-xpath-expression-generation-engine.md`: Architecture decision record
+
+### Integration Points Established
+- **Data Models**: Uses `LocatorStrategy` and `ConfidenceScore` interfaces
+- **Browser APIs**: Native XPath evaluation with `document.evaluate()`
+- **Error Handling**: Comprehensive XPath evaluation error handling
+- **Future Extensions**: Foundation for multi-strategy locator generation system
+
+### Ready for Next Task:
+- Task 4.3: Implement ID, Class, Name, and Tag locator strategies with TDD
+- XPath generation engine complete with native browser XPath evaluation
+- Comprehensive confidence scoring with XPath-specific reliability factors
+- Foundation established for multi-strategy locator generation system
+
+---
+
+## Task 4.3: Attribute Locator Generator Refactoring (2025-07-24)
+
+### TDD Cycle: REFACTOR Phase ✅
+
+**Context**: Refactored AttributeLocatorGenerator class to improve code quality, fix confidence score hierarchy, and enhance maintainability following clean code principles.
+
+### Issues Addressed:
+**Primary Problem**: Confidence score hierarchy was broken - name and class locators had equal scores (91), breaking expected priority order
+**Secondary Issues**: 
+- Long methods with multiple responsibilities
+- Magic numbers scattered throughout codebase
+- Repeated pattern matching logic
+- Difficult maintenance and extension
+
+### REFACTOR Phase: Comprehensive Code Quality Improvements
+
+**1. Extracted Configuration Constants**:
+- `STABILITY_SCORES`: Centralized scoring values for all locator types
+- `PATTERNS`: Compiled regex patterns for stability assessment
+- `TAG_CATEGORIES`: Semantic tag classification for stability scoring
+- Eliminated all magic numbers from methods
+
+**2. Decomposed Complex Methods**:
+- Split `generateConfidenceScore()` into focused, single-responsibility methods
+- `calculateUniquenessScore()`: Handles uniqueness factor calculation
+- `calculateTypeSpecificScore()`: Delegates to type-specific scoring methods
+- `calculateIdTypeScore()`, `calculateClassTypeScore()`, `calculateNameTypeScore()`, `calculateTagTypeScore()`: Type-specific logic
+- Each method now under 20 lines (previously up to 80+ lines)
+
+**3. Fixed Confidence Score Hierarchy**:
+- Adjusted name locator type score from 6 to 7 points
+- Ensured proper hierarchy: ID (highest) → Name → Class → Tag (lowest)
+- Maintained consistent weighting system across all locator types
+
+**4. Centralized Pattern Management**:
+- All regex patterns defined in single `PATTERNS` constant
+- Reused patterns across validation and stability assessment methods
+- Improved consistency in pattern matching logic
+
+### Requirements Traceability Maintained:
+- ✅ **Requirement 2.1**: ID, Class, Name, and Tag locator generation strategies
+- ✅ **Requirement 3.2**: Confidence scoring for locator reliability
+- ✅ **Requirement 3.4**: Uniqueness validation and stability assessment
+
+### Quality Metrics After Refactoring:
+- **Test Coverage**: Maintained 95%+ coverage with all 31 tests passing
+- **Cyclomatic Complexity**: Reduced from high complexity to manageable levels
+- **Code Duplication**: Eliminated repeated pattern definitions
+- **Method Length**: All methods now under 20 lines
+- **Maintainability**: Configuration centralized, easy to extend
+
+### Files Modified:
+- `src/shared/attribute-locator-generator.ts`: Complete refactoring with improved structure
+- `__tests__/shared/attribute-locator-generator.test.ts`: Fixed test expectations for correct hierarchy
+- `docs/adr/ADR-007-attribute-locator-generator-refactoring.md`: Architecture decision record
+
+### Architecture Improvements:
+**Refactoring Patterns Applied**:
+- **Extract Method**: Long methods broken into focused, single-responsibility methods
+- **Extract Constants**: Magic numbers moved to centralized configuration
+- **Strategy Pattern**: Type-specific scoring delegated to dedicated methods
+- **Template Method**: Common scoring structure with type-specific variations
+
+### Integration Points Maintained:
+- **Data Models**: Continues to use `LocatorStrategy` and `ConfidenceScore` interfaces
+- **DOM Integration**: All validation methods preserved and improved
+- **Error Handling**: Enhanced error handling with better context
+- **Future Extensions**: Much easier to add new patterns or adjust scoring
+
+### Ready for Next Task:
+- Task 4.4: Implement ARIA accessibility locator generation with TDD
+- Attribute locator generator now has clean, maintainable architecture
+- Confidence scoring hierarchy properly established for all locator types
+- Foundation improved for additional locator strategy implementations
+
+---
+
+## Current Development Status
+
+### Completed Components (TDD-Driven):
+1. ✅ **Project Structure & Testing Framework** - Complete foundation with Chrome extension setup
+2. ✅ **Data Models & Interfaces** - Type-safe data structures with validation
+3. ✅ **Error Handling System** - Centralized error management with pattern recognition
+4. ✅ **Storage Manager** - Chrome storage wrapper with history management
+5. ✅ **CSS Selector Generation Engine** - Priority-based CSS selector creation
+6. ✅ **XPath Expression Generation Engine** - Native browser XPath generation
+7. ✅ **Attribute Locator Generator** - ID, Class, Name, and Tag locator strategies (refactored)
+
+### Quality Metrics Summary:
+- **Overall Test Coverage**: 95%+ statements, 90%+ branches
+- **Total Tests**: 159 tests passing across all components
+- **Code Quality**: ESLint compliant, TypeScript strict mode
+- **Documentation**: 7 ADRs created, comprehensive implementation context
+
+### Architecture Foundation Established:
+- **Modular Design**: Clear separation of concerns across components
+- **Type Safety**: Comprehensive TypeScript interfaces with runtime validation
+- **Error Resilience**: Centralized error handling with graceful degradation
+- **Storage Integration**: Chrome storage wrapper with automatic history management
+- **Locator Generation**: Three complete locator engines (CSS, XPath, Attribute) with confidence scoring
+- **Code Quality**: Refactored architecture with centralized configuration and clean methods
+
+### Ready for Next Development Phase:
+- **Task 4.4**: ARIA accessibility locator generation
+- **Task 4.5**: Confidence scoring algorithm aggregation
+- **Task 5.1**: Content script implementation for DOM interaction
+- **Task 5.2**: Element highlighting system
+
+### Development Patterns Established:
+- **TDD Methodology**: Strict RED-GREEN-REFACTOR cycles for all implementations
+- **Quality Gates**: 90%+ coverage, ESLint compliance, comprehensive error handling
+- **Documentation**: ADRs for architectural decisions, implementation context preservation
+- **Integration**: Shared data models, centralized error handling, modular architecture
+---
+
+
+## Task 4.4: ARIA Accessibility Locator Generation Implementation (2025-07-24)
+
+### TDD Cycle: RED → GREEN → REFACTOR ✅
+
+**Context**: Implemented comprehensive ARIA accessibility locator generation engine with detailed accessibility snapshots and intelligent attribute prioritization following strict TDD methodology.
+
+### RED Phase: Comprehensive Test Suite
+**Failing Tests Created**: 19 tests covering all aspects of ARIA locator generation
+- ARIA attribute detection (role, aria-label, aria-labelledby, aria-describedby)
+- Multiple ARIA attribute prioritization (aria-label over role for uniqueness)
+- ARIA locator uniqueness validation with DOM querying
+- Confidence scoring with ARIA-specific factors and warnings
+- Comprehensive ARIA snapshot generation with accessibility information
+- Computed accessible name following ARIA specification precedence
+- Role hierarchy building for context understanding
+- Error handling for null elements, malformed attributes, and DOM query errors
+- Integration with multiple ARIA locator strategies
+- Strategy prioritization by confidence score
+
+### GREEN Phase: Minimal Implementation
+**Core Class**: `AriaLocatorGenerator` with comprehensive ARIA functionality
+- **Priority System**: `aria-label` > `role` > `aria-labelledby` > `aria-describedby` > other ARIA attributes
+- **ARIA Snapshot Generation**: Element info, ARIA attributes, accessible name/description, role, states, hierarchy
+- **Accessible Name Computation**: Follows ARIA specification (aria-label → aria-labelledby → associated label → text content)
+- **Role Hierarchy**: Builds parent role chain including implicit roles (ul→list, li→listitem)
+- **State Detection**: Extracts both ARIA states and HTML5 attributes (e.g., `required`)
+- **Confidence Scoring**: ARIA-specific algorithm with attribute reliability assessment
+
+### REFACTOR Phase: Code Quality Improvements
+**Documentation Enhancement**:
+- Created comprehensive ADR-008 documenting ARIA implementation decisions
+- Enhanced JSDoc documentation with ARIA specification compliance notes
+- Added detailed interface documentation for `AriaSnapshot`
+- Updated implementation context with complete TDD cycle information
+
+### Requirements Traceability
+- ✅ **Requirement 4.2**: ARIA attribute detection and accessibility-friendly locators in main locators tab
+- ✅ **Requirement 4.3**: ARIA snapshot generation functionality for detailed accessibility analysis
+
+### Architecture Integration
+**ARIA Accessibility Engine**:
+- **Single Locator**: `generateAriaLocator()` returns best ARIA locator or null
+- **Multiple Strategies**: `generateAllAriaStrategies()` returns all valid ARIA locators sorted by confidence
+- **Snapshot Generation**: `generateAriaSnapshot()` provides comprehensive accessibility analysis
+- **Error Handling**: Graceful degradation for missing/malformed ARIA attributes
+- **DOM Integration**: Uses native DOM APIs for role computation and element relationships
+
+### Quality Metrics Achieved
+- **Test Coverage**: 100% test coverage with 19/19 tests passing
+- **Code Quality**: TypeScript strict mode compliance, ESLint compliant
+- **Error Handling**: Comprehensive error handling with graceful degradation
+- **ARIA Compliance**: Follows ARIA specification for accessible name computation
+
+### Files Created
+- `src/shared/aria-locator-generator.ts`: ARIA accessibility locator generation engine (460+ lines)
+- `__tests__/shared/aria-locator-generator.test.ts`: Comprehensive test suite with 19 test cases
+- `docs/adr/ADR-008-aria-accessibility-locator-generation.md`: Architecture decision record
+
+### Key Interfaces Implemented
+```typescript
+interface AriaSnapshot {
+  element: string
+  ariaAttributes: Record<string, string>
+  accessibleName: string
+  accessibleDescription: string
+  role: string
+  states: string[]
+  hierarchy: string[]
+}
+```
+
+### Integration Points Established
+- **Data Models**: Uses existing `LocatorStrategy` and `ConfidenceScore` interfaces
+- **Locator Engine**: Ready for integration into main locator generation workflow
+- **UI Components**: ARIA tab in popup will consume snapshot data
+- **Storage**: ARIA locators stored in history like other locator types
+
+### Confidence Scoring Algorithm
+- **Base Score**: 50 points
+- **aria-label**: +35 points (highest reliability for descriptive text)
+- **role**: +10 points (moderate reliability for element purpose)
+- **Other ARIA attributes**: +5 points (basic accessibility context)
+- **Uniqueness**: +15 points if unique, -20 points if ambiguous
+- **Generic Attributes**: -15 points for state-based attributes (aria-hidden, aria-expanded, etc.)
+- **Validation Errors**: Warning added if DOM query fails
+
+### Ready for Next Task:
+- Task 4.5: Implement confidence scoring algorithm with TDD
+- ARIA accessibility locator generation complete with comprehensive snapshot functionality
+- Foundation established for accessibility-focused test automation
+- Integration ready for main locator generation workflow and UI components
+
+### Future Enhancements Identified:
+- **ARIA Live Regions**: Support for dynamic content accessibility analysis
+- **ARIA Validation**: Validate ARIA usage against accessibility best practices
+- **Performance Optimization**: Cache DOM queries and computed values
+- **Extended Snapshot**: Include computed accessibility tree information
+---
+
+
+### Task 4.5: Implement confidence scoring algorithm with TDD
+**Status:** ✅ Completed  
+**Date:** 2025-07-24
+
+#### TDD Cycle Summary:
+- **RED Phase:** Created 33 failing tests defining unified confidence scoring algorithm
+- **GREEN Phase:** Implemented `ConfidenceScoringEngine` class with minimal code to pass all tests
+- **REFACTOR Phase:** Enhanced documentation and created comprehensive ADR
+
+#### Requirements Traceability:
+- ✅ Requirement 3.1: Confidence scoring with detailed explanations
+- ✅ Requirement 3.2: Confidence scoring for locator reliability with detailed factors
+- ✅ Requirement 3.3: Warnings for low confidence scores with specific messages
+- ✅ Requirement 3.4: Uniqueness validation and stability assessment across all locator types
+
+#### Architecture Decisions:
+- ADR-009: Unified Confidence Scoring Engine with centralized algorithm
+- Multi-factor scoring: Uniqueness (40%) + Stability (35%) + Type Reliability (15%) + Pattern Analysis (10%)
+- Hierarchical strategy comparison: Type > Uniqueness > Confidence Score
+- Comprehensive pattern detection for auto-generated and fragile selectors
+
+#### Implementation Details:
+- **Core Class:** `ConfidenceScoringEngine` with unified scoring algorithm
+- **Key Methods:**
+  - `calculateConfidenceScore()` - Main confidence assessment with detailed factors
+  - `assessStability()` - Type-specific stability scoring (0-100 scale)
+  - `detectPatterns()` - Pattern recognition for reliability assessment
+  - `generateExplanation()` - Human-readable confidence explanations
+  - `compareStrategies()` - Hierarchical strategy ranking
+- **Pattern Detection:** Auto-generated, position-based, semantic, accessibility, utility, BEM patterns
+- **Stability Algorithms:** Type-specific scoring for ID, Class, Name, Tag, CSS, XPath, ARIA selectors
+
+#### Quality Metrics:
+- **Test Coverage:** 100% line coverage with 33 comprehensive test cases
+- **Tests:** 33/33 passing with edge cases and error handling
+- **Code Quality:** ESLint compliant, follows SOLID principles
+- **Documentation:** Complete ADR with algorithm details and architectural decisions
+
+#### Files Created:
+- `src/shared/confidence-scoring-engine.ts` - Unified confidence scoring engine
+- `__tests__/shared/confidence-scoring-engine.test.ts` - Comprehensive test suite
+- `docs/adr/ADR-009-confidence-scoring-engine.md` - Architecture decision record
+
+#### Next Agent Context:
+- Unified confidence scoring engine provides consistent assessment across all locator types
+- Comprehensive pattern detection identifies auto-generated and fragile selectors
+- Ready for integration with content script and locator generation workflow (Task 5.1)
+- Foundation established for cross-strategy comparison and optimal locator selection
+
+#### TDD Methodology Compliance:
+- ✅ **RED Phase:** All 33 tests written before implementation
+- ✅ **GREEN Phase:** Minimal implementation to pass tests
+- ✅ **REFACTOR Phase:** Code organization and documentation improvements
+- ✅ **Quality Gates:** 100% test coverage, comprehensive edge case handling
+- ✅ **Architecture Documentation:** ADR created with detailed algorithm explanation
