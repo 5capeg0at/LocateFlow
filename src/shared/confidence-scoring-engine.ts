@@ -131,22 +131,22 @@ export class ConfidenceScoringEngine {
      */
   assessStability(type: LocatorType, selector: string): number {
     switch (type) {
-      case 'id':
-        return this.assessIdStability(selector);
-      case 'class':
-        return this.assessClassStability(selector);
-      case 'name':
-        return this.assessNameStability(selector);
-      case 'tag':
-        return this.assessTagStability(selector);
-      case 'css':
-        return this.assessCssStability(selector);
-      case 'xpath':
-        return this.assessXPathStability(selector);
-      case 'aria':
-        return this.assessAriaStability(selector);
-      default:
-        return 50; // Default stability
+    case 'id':
+      return this.assessIdStability(selector);
+    case 'class':
+      return this.assessClassStability(selector);
+    case 'name':
+      return this.assessNameStability(selector);
+    case 'tag':
+      return this.assessTagStability(selector);
+    case 'css':
+      return this.assessCssStability(selector);
+    case 'xpath':
+      return this.assessXPathStability(selector);
+    case 'aria':
+      return this.assessAriaStability(selector);
+    default:
+      return 50; // Default stability
     }
   }
 
@@ -161,21 +161,21 @@ export class ConfidenceScoringEngine {
     const patterns: string[] = [];
 
     switch (type) {
-      case 'id':
-        patterns.push(...this.detectIdPatterns(selector));
-        break;
-      case 'class':
-        patterns.push(...this.detectClassPatterns(selector));
-        break;
-      case 'xpath':
-        patterns.push(...this.detectXPathPatterns(selector));
-        break;
-      case 'css':
-        patterns.push(...this.detectCssPatterns(selector));
-        break;
-      case 'aria':
-        patterns.push(...this.detectAriaPatterns(selector));
-        break;
+    case 'id':
+      patterns.push(...this.detectIdPatterns(selector));
+      break;
+    case 'class':
+      patterns.push(...this.detectClassPatterns(selector));
+      break;
+    case 'xpath':
+      patterns.push(...this.detectXPathPatterns(selector));
+      break;
+    case 'css':
+      patterns.push(...this.detectCssPatterns(selector));
+      break;
+    case 'aria':
+      patterns.push(...this.detectAriaPatterns(selector));
+      break;
     }
 
     return patterns;
@@ -192,27 +192,27 @@ export class ConfidenceScoringEngine {
 
     // Type-specific introduction
     switch (strategy.type) {
-      case 'id':
-        explanation = 'ID selector provides high reliability when unique. ';
-        break;
-      case 'class':
-        explanation = 'Class selector offers moderate reliability. ';
-        break;
-      case 'name':
-        explanation = 'Name attribute selector is reliable for form elements. ';
-        break;
-      case 'tag':
-        explanation = 'Tag selector has low reliability due to commonality. ';
-        break;
-      case 'css':
-        explanation = 'CSS selector reliability depends on specificity. ';
-        break;
-      case 'xpath':
-        explanation = 'XPath selector reliability varies by expression type. ';
-        break;
-      case 'aria':
-        explanation = 'ARIA selector provides semantic accessibility benefits. ';
-        break;
+    case 'id':
+      explanation = 'ID selector provides high reliability when unique. ';
+      break;
+    case 'class':
+      explanation = 'Class selector offers moderate reliability. ';
+      break;
+    case 'name':
+      explanation = 'Name attribute selector is reliable for form elements. ';
+      break;
+    case 'tag':
+      explanation = 'Tag selector has low reliability due to commonality. ';
+      break;
+    case 'css':
+      explanation = 'CSS selector reliability depends on specificity. ';
+      break;
+    case 'xpath':
+      explanation = 'XPath selector reliability varies by expression type. ';
+      break;
+    case 'aria':
+      explanation = 'ARIA selector provides semantic accessibility benefits. ';
+      break;
     }
 
     // Confidence level assessment
@@ -339,44 +339,44 @@ export class ConfidenceScoringEngine {
 
     for (const pattern of patterns) {
       switch (pattern) {
-        case 'auto-generated':
-          factors.push({
-            factor: 'Auto-generated pattern',
-            impact: 'negative',
-            weight: 0.1,
-            description: 'Selector appears to be auto-generated'
-          });
-          warnings.push('Contains auto-generated class names that may change');
-          score -= 10;
-          break;
-        case 'position-based':
-          factors.push({
-            factor: 'Position-based selector',
-            impact: 'negative',
-            weight: 0.1,
-            description: 'Selector relies on element position'
-          });
-          warnings.push('Uses position-based selectors that may break with DOM changes');
-          score -= 10;
-          break;
-        case 'semantic':
-          factors.push({
-            factor: 'Semantic pattern',
-            impact: 'positive',
-            weight: 0.05,
-            description: 'Selector uses semantic naming'
-          });
-          score += 5;
-          break;
-        case 'accessibility-friendly':
-          factors.push({
-            factor: 'Accessibility-friendly',
-            impact: 'positive',
-            weight: 0.1,
-            description: 'Selector supports accessibility'
-          });
-          score += 10;
-          break;
+      case 'auto-generated':
+        factors.push({
+          factor: 'Auto-generated pattern',
+          impact: 'negative',
+          weight: 0.1,
+          description: 'Selector appears to be auto-generated'
+        });
+        warnings.push('Contains auto-generated class names that may change');
+        score -= 10;
+        break;
+      case 'position-based':
+        factors.push({
+          factor: 'Position-based selector',
+          impact: 'negative',
+          weight: 0.1,
+          description: 'Selector relies on element position'
+        });
+        warnings.push('Uses position-based selectors that may break with DOM changes');
+        score -= 10;
+        break;
+      case 'semantic':
+        factors.push({
+          factor: 'Semantic pattern',
+          impact: 'positive',
+          weight: 0.05,
+          description: 'Selector uses semantic naming'
+        });
+        score += 5;
+        break;
+      case 'accessibility-friendly':
+        factors.push({
+          factor: 'Accessibility-friendly',
+          impact: 'positive',
+          weight: 0.1,
+          description: 'Selector supports accessibility'
+        });
+        score += 10;
+        break;
       }
     }
 
