@@ -476,10 +476,8 @@ describe('ConfidenceScoringEngine', () => {
             expect(result.warnings).toContain('Unknown locator type: invalid');
         });
 
-        it('should handle DOM query errors gracefully', () => {
-            // The DOM query error should be handled at the uniqueness validation level
-            // Since we're not actually validating uniqueness in the engine (it uses the strategy's isUnique property)
-            // Let's test a different scenario - when the strategy itself indicates a validation error
+        it('should handle non-unique selector warnings', () => {
+            // Test that the engine properly handles non-unique selectors by adding appropriate warnings
             const strategy: LocatorStrategy = {
                 type: 'css',
                 selector: '#test',
@@ -491,6 +489,33 @@ describe('ConfidenceScoringEngine', () => {
 
             const result = engine.calculateConfidenceScore(strategy, mockElement, mockDocument);
             expect(result.warnings).toContain('Selector matches multiple elements');
+        });
+
+        it('should handle DOM query errors during uniqueness scoring', () => {
+            // Mock the calculateUniquenessScore method to throw an error
+            const originalMethod = (engine as any).calculateUniquenessScore;
+            (engine as any).calculateUniquenessScore = jest.fn().mockImplementation(() => {
+                throw new Error('DOM query failed');
+            });
+
+            const strategy: LocatorStrategy = {
+                type: 'css',
+                selector: '#test',
+                confidence: { score: 0, factors: [], warnings: [] },
+                explanation: '',
+                isUnique: true,
+                isStable: true
+            };
+
+            const result = engine.calculateConfidenceScore(strategy, mockElement, mockDocument);
+
+            // Should handle the error gracefully
+            expect(result.warnings).toContain('Could not validate selector uniqueness due to DOM error');
+            expect(result.factors.some(f => f.factor === 'uniqueness_error')).toBe(true);
+            expect(result.score).toBeGreaterThanOrEqual(0); // Should not crash
+
+            // Restore original method
+            (engine as any).calculateUniquenessScore = originalMethod;
         });
     });
 });

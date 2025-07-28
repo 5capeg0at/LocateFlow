@@ -27,13 +27,13 @@ import { LocatorStrategy, ConfidenceScore, ConfidenceFactor } from './data-model
  * ARIA snapshot containing comprehensive accessibility information
  */
 export interface AriaSnapshot {
-    element: string;
-    ariaAttributes: Record<string, string>;
-    accessibleName: string;
-    accessibleDescription: string;
-    role: string;
-    states: string[];
-    hierarchy: string[];
+  element: string;
+  ariaAttributes: Record<string, string>;
+  accessibleName: string;
+  accessibleDescription: string;
+  role: string;
+  states: string[];
+  hierarchy: string[];
 }
 
 // ============================================================================
@@ -81,15 +81,15 @@ export class AriaLocatorGenerator {
     }
 
     const selector = `[${bestAttribute.name}="${bestAttribute.value}"]`;
-    const isUnique = this.validateUniqueness(selector);
-    const confidence = this.calculateAriaConfidence(bestAttribute, ariaAttributes, isUnique);
+    const validationResult = this.validateUniqueness(selector);
+    const confidence = this.calculateAriaConfidence(bestAttribute, ariaAttributes, validationResult.isUnique, validationResult.error);
 
     return {
       type: 'aria',
       selector,
       confidence,
       explanation: `ARIA locator using ${bestAttribute.name} attribute`,
-      isUnique,
+      isUnique: validationResult.isUnique,
       isStable: this.calculateStability(bestAttribute)
     };
   }
@@ -110,11 +110,12 @@ export class AriaLocatorGenerator {
     for (const [name, value] of Object.entries(ariaAttributes)) {
       if (this.isValidAttributeValue(value)) {
         const selector = `[${name}="${value}"]`;
-        const isUnique = this.validateUniqueness(selector);
+        const validationResult = this.validateUniqueness(selector);
         const confidence = this.calculateAriaConfidence(
           { name, value },
           ariaAttributes,
-          isUnique
+          validationResult.isUnique,
+          validationResult.error
         );
 
         strategies.push({
@@ -122,7 +123,7 @@ export class AriaLocatorGenerator {
           selector,
           confidence,
           explanation: `ARIA locator using ${name} attribute`,
-          isUnique,
+          isUnique: validationResult.isUnique,
           isStable: this.calculateStability({ name, value })
         });
       }
@@ -204,19 +205,16 @@ export class AriaLocatorGenerator {
 
   /**
      * Validates uniqueness of a selector
+     * @returns Object containing validation result and any error encountered
      */
-  private validateUniqueness(selector: string): boolean {
+  private validateUniqueness(selector: string): { isUnique: boolean; error?: any } {
     try {
       const elements = document.querySelectorAll(selector);
-      return elements.length === 1;
+      return { isUnique: elements.length === 1 };
     } catch (error) {
-      // Store error for later use in confidence calculation
-      this.lastValidationError = error;
-      return false;
+      return { isUnique: false, error };
     }
   }
-
-  private lastValidationError: any = null;
 
   /**
      * Calculates confidence score for ARIA locator
@@ -224,7 +222,8 @@ export class AriaLocatorGenerator {
   private calculateAriaConfidence(
     attribute: { name: string; value: string },
     _allAttributes: Record<string, string>,
-    isUnique: boolean
+    isUnique: boolean,
+    validationError?: any
   ): ConfidenceScore {
     const factors: ConfidenceFactor[] = [];
     const warnings: string[] = [];
@@ -284,9 +283,8 @@ export class AriaLocatorGenerator {
     }
 
     // Add validation error warning if present
-    if (this.lastValidationError) {
+    if (validationError) {
       warnings.push('Could not validate locator uniqueness');
-      this.lastValidationError = null; // Reset for next use
     }
 
     return {

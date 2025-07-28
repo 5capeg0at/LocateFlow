@@ -360,19 +360,22 @@ describe('AriaLocatorGenerator', () => {
 
             // Mock querySelectorAll to throw error
             const originalQuerySelectorAll = document.querySelectorAll;
-            document.querySelectorAll = jest.fn().mockImplementation(() => {
-                throw new Error('Invalid selector');
-            });
 
-            // Act
-            const result = generator.generateAriaLocator(element);
+            try {
+                document.querySelectorAll = jest.fn().mockImplementation(() => {
+                    throw new Error('Invalid selector');
+                });
 
-            // Assert
-            expect(result).not.toBeNull();
-            expect(result!.confidence.warnings).toContain('Could not validate locator uniqueness');
+                // Act
+                const result = generator.generateAriaLocator(element);
 
-            // Cleanup
-            document.querySelectorAll = originalQuerySelectorAll;
+                // Assert
+                expect(result).not.toBeNull();
+                expect(result!.confidence.warnings).toContain('Could not validate locator uniqueness');
+            } finally {
+                // Ensure cleanup happens regardless of test outcome
+                document.querySelectorAll = originalQuerySelectorAll;
+            }
         });
     });
 
