@@ -191,8 +191,8 @@ describe('InspectionModeManager', () => {
 
             // ASSERT
             expect(mockChrome.runtime.sendMessage).toHaveBeenCalledWith({
-                type: 'INSPECTION_MODE_ACTIVATED',
-                tabId: expect.any(Number)
+                type: 'INSPECTION_MODE_ACTIVATED'
+                // tabId is omitted - service worker will determine it from sender
             });
         });
 
@@ -206,8 +206,8 @@ describe('InspectionModeManager', () => {
 
             // ASSERT
             expect(mockChrome.runtime.sendMessage).toHaveBeenCalledWith({
-                type: 'INSPECTION_MODE_DEACTIVATED',
-                tabId: expect.any(Number)
+                type: 'INSPECTION_MODE_DEACTIVATED'
+                // tabId is omitted - service worker will determine it from sender
             });
         });
 

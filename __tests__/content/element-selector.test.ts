@@ -171,7 +171,7 @@ describe('ElementSelector', () => {
 
             elementSelector.handleElementClick(mockElement, false);
 
-            expect(mockWriteText).toHaveBeenCalledWith('#test-element');
+            expect(mockWriteText).toHaveBeenCalledWith('#test-button'); // ID-based CSS selector should be highest rated
         });
     });
 
@@ -323,7 +323,7 @@ describe('ElementSelector', () => {
             const strategies = elementSelector.generateAllLocators(mockElement);
             const highestRated = elementSelector.getHighestRatedLocator(strategies);
 
-            expect(highestRated).toBe('#test-button'); // Uses element ID as fallback
+            expect(highestRated).toBe('#test-button'); // ID-based CSS selector should be highest rated
         });
     });
 });

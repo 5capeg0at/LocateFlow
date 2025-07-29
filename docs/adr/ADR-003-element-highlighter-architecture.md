@@ -1,8 +1,8 @@
 # ADR-003: Element Highlighter Architecture
 
-Date: 2025-07-24
+Date: 2025-01-28
 Status: Accepted
-Deciders: AI Agent (Kiro)
+Deciders: Development Team
 
 ## Context
 

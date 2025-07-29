@@ -187,9 +187,13 @@ export class OnPagePopup {
     private createTabContent(contentContainer: HTMLElement, strategies: LocatorStrategy[]): void {
         // Create locators content
         const locatorsContent = this.createLocatorsContent(strategies);
+        locatorsContent.id = 'locateflow-content-locators';
+        locatorsContent.style.display = 'block'; // Initially visible
 
         // Create ARIA content
         const ariaContent = this.createAriaContent();
+        ariaContent.id = 'locateflow-content-aria';
+        ariaContent.style.display = 'none'; // Initially hidden
 
         contentContainer.appendChild(locatorsContent);
         contentContainer.appendChild(ariaContent);
@@ -295,8 +299,19 @@ export class OnPagePopup {
             }
         });
 
-        // Update content visibility (implementation would show/hide content)
-        // For now, just ensure the tab switching logic works
+        // Update content visibility
+        const locatorsContent = document.getElementById('locateflow-content-locators');
+        const ariaContent = document.getElementById('locateflow-content-aria');
+
+        if (locatorsContent && ariaContent) {
+            if (tabId === 'locators') {
+                locatorsContent.style.display = 'block';
+                ariaContent.style.display = 'none';
+            } else if (tabId === 'aria') {
+                locatorsContent.style.display = 'none';
+                ariaContent.style.display = 'block';
+            }
+        }
     }
 
     /**

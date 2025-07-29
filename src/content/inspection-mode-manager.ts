@@ -23,7 +23,6 @@
  */
 interface ServiceWorkerMessage {
     type: string;
-    tabId?: number;
 }
 
 /**
@@ -203,8 +202,8 @@ export class InspectionModeManager {
         try {
             if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
                 const message: ServiceWorkerMessage = {
-                    type: messageType,
-                    tabId: this.getCurrentTabId()
+                    type: messageType
+                    // tabId is omitted - service worker will determine it from sender
                 };
                 chrome.runtime.sendMessage(message);
             }
@@ -214,12 +213,5 @@ export class InspectionModeManager {
         }
     }
 
-    /**
-     * Get current tab ID (simplified implementation)
-     */
-    private getCurrentTabId(): number {
-        // In a real implementation, this would get the actual tab ID
-        // For testing purposes, return a mock tab ID
-        return Date.now();
-    }
+
 }
