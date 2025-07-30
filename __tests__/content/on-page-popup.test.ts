@@ -2,10 +2,11 @@ import { OnPagePopup } from '../../src/content/on-page-popup';
 import { LocatorStrategy } from '../../src/shared/data-models';
 
 // Mock clipboard API
-Object.assign(navigator, {
-  clipboard: {
+Object.defineProperty(navigator, 'clipboard', {
+  value: {
     writeText: jest.fn(() => Promise.resolve())
-  }
+  },
+  writable: true
 });
 
 describe('OnPagePopup - Locator Display and Copy Functionality', () => {

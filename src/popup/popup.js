@@ -7,6 +7,8 @@ class PopupManager {
     this.clearHistoryButton = document.getElementById('clear-history');
     this.historyList = document.getElementById('history-list');
     this.popupContainer = document.querySelector('.popup-container');
+    this.mediaQuery = null;
+    this.themeChangeHandler = null;
 
     this.init();
   }
@@ -98,14 +100,20 @@ class PopupManager {
   }
 
   setupAutoTheme() {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleThemeChange = (e) => {
+    this.mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    this.themeChangeHandler = (e) => {
       this.popupContainer.classList.remove('theme-light', 'theme-dark');
       this.popupContainer.classList.add(e.matches ? 'theme-dark' : 'theme-light');
     };
 
-    mediaQuery.addEventListener('change', handleThemeChange);
-    handleThemeChange(mediaQuery); // Apply initial theme
+    this.mediaQuery.addEventListener('change', this.themeChangeHandler);
+    this.themeChangeHandler(this.mediaQuery); // Apply initial theme
+  }
+
+  cleanup() {
+    if (this.mediaQuery && this.themeChangeHandler) {
+      this.mediaQuery.removeEventListener('change', this.themeChangeHandler);
+    }
   }
 
   async loadHistory() {
@@ -118,6 +126,12 @@ class PopupManager {
     }
   }
 
+  escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
   displayHistory(history) {
     if (this.historyList) {
       if (history.length === 0) {
@@ -125,20 +139,22 @@ class PopupManager {
       } else {
         this.historyList.innerHTML = history.map(item => `
                     <div class="history-item">
-                        <div class="history-locator">${item.selector}</div>
+                        <div class="history-locator">${this.escapeHtml(item.selector)}</div>
                         <div class="history-meta">
-                            <span class="history-url">${item.url}</span>
+                            <span class="history-url">${this.escapeHtml(item.url)}</span>
                             <span class="history-time">${new Date(item.timestamp).toLocaleString()}</span>
                         </div>
-                        <button class="copy-btn" data-selector="${item.selector}">Copy</button>
+                        <button class="copy-btn" data-selector="${this.escapeHtml(item.selector)}">Copy</button>
                     </div>
                 `).join('');
 
         // Add copy button listeners
         this.historyList.querySelectorAll('.copy-btn').forEach(btn => {
           btn.addEventListener('click', (e) => {
-            const selector = e.target.getAttribute('data-selector');
-            this.copyToClipboard(selector);
+            if (e.target && typeof e.target.getAttribute === 'function') {
+              const selector = e.target.getAttribute('data-selector');
+              this.copyToClipboard(selector);
+            }
           });
         });
       }
@@ -169,6 +185,14 @@ class PopupManager {
 }
 
 // Initialize popup when DOM is loaded
+let popupManager;
 document.addEventListener('DOMContentLoaded', () => {
-  new PopupManager();
+  popupManager = new PopupManager();
+});
+
+// Cleanup on window unload
+window.addEventListener('unload', () => {
+  if (popupManager) {
+    popupManager.cleanup();
+  }
 });

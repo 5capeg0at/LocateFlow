@@ -69,6 +69,7 @@ export class ServiceWorker {
     });
     chrome.tabs.onActivated.addListener(this.handleTabActivated.bind(this));
     chrome.tabs.onUpdated.addListener(this.handleTabUpdated.bind(this));
+    chrome.tabs.onRemoved.addListener(this.handleTabRemoved.bind(this));
   }
 
   /**
@@ -89,38 +90,38 @@ export class ServiceWorker {
   ): Promise<void> {
     try {
       switch (message.action) {
-      case 'activateInspection':
-        await this.handleActivateInspection(message.tabId!, sendResponse);
-        break;
-      case 'deactivateInspection':
-        await this.handleDeactivateInspection(message.tabId!, sendResponse);
-        break;
-      case 'getInspectionState':
-        await this.handleGetInspectionState(message.tabId!, sendResponse);
-        break;
-      case 'updatePreferences':
-        await this.handleUpdatePreferences(message.preferences, sendResponse);
-        break;
-      case 'getPreferences':
-        await this.handleGetPreferences(sendResponse);
-        break;
-      case 'saveToHistory':
-        await this.handleSaveToHistory(message.locatorData, sendResponse);
-        break;
-      case 'getHistory':
-        await this.handleGetHistory(sendResponse);
-        break;
-      case 'clearHistory':
-        await this.handleClearHistory(sendResponse);
-        break;
-      case 'getStorageStats':
-        await this.handleGetStorageStats(sendResponse);
-        break;
-      default:
-        sendResponse({
-          success: false,
-          error: `Unknown action: ${message.action}`
-        });
+        case 'activateInspection':
+          await this.handleActivateInspection(message.tabId!, sendResponse);
+          break;
+        case 'deactivateInspection':
+          await this.handleDeactivateInspection(message.tabId!, sendResponse);
+          break;
+        case 'getInspectionState':
+          await this.handleGetInspectionState(message.tabId!, sendResponse);
+          break;
+        case 'updatePreferences':
+          await this.handleUpdatePreferences(message.preferences, sendResponse);
+          break;
+        case 'getPreferences':
+          await this.handleGetPreferences(sendResponse);
+          break;
+        case 'saveToHistory':
+          await this.handleSaveToHistory(message.locatorData, sendResponse);
+          break;
+        case 'getHistory':
+          await this.handleGetHistory(sendResponse);
+          break;
+        case 'clearHistory':
+          await this.handleClearHistory(sendResponse);
+          break;
+        case 'getStorageStats':
+          await this.handleGetStorageStats(sendResponse);
+          break;
+        default:
+          sendResponse({
+            success: false,
+            error: `Unknown action: ${message.action}`
+          });
       }
     } catch (error) {
       await this.logError('handleMessage', error as Error, { action: message.action });
@@ -481,9 +482,7 @@ export class ServiceWorker {
      */
   private async handleClearHistory(sendResponse: (response: any) => void): Promise<void> {
     try {
-      await chrome.storage.local.set({
-        locateflow_history: []
-      });
+      await this.storageManager.clearHistory();
       sendResponse({ success: true });
     } catch (error) {
       await this.logError('Storage coordination', error as Error, { action: 'clearHistory' });

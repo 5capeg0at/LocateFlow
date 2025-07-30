@@ -97,6 +97,25 @@ export class InspectionModeManager {
   }
 
   /**
+     * Dispose of the manager and clean up all listeners
+     */
+  dispose(): void {
+    // Deactivate if currently active
+    if (this.isActive) {
+      this.deactivateInspectionMode();
+    }
+
+    // Remove message listener
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
+      chrome.runtime.onMessage.removeListener(this.messageListener);
+    }
+
+    // Clear callbacks
+    this.activationCallbacks = [];
+    this.deactivationCallbacks = [];
+  }
+
+  /**
      * Register callback for mode activation
      */
   onModeActivated(callback: () => void): void {
@@ -181,16 +200,16 @@ export class InspectionModeManager {
   private handleMessage(message: any, _sender: any, sendResponse: any): void {
     try {
       switch (message.type) {
-      case 'ACTIVATE_INSPECTION_MODE':
-        this.activateInspectionMode();
-        sendResponse({ success: true });
-        break;
-      case 'DEACTIVATE_INSPECTION_MODE':
-        this.deactivateInspectionMode();
-        sendResponse({ success: true });
-        break;
-      default:
-        sendResponse({ success: false, error: 'Unknown message type' });
+        case 'ACTIVATE_INSPECTION_MODE':
+          this.activateInspectionMode();
+          sendResponse({ success: true });
+          break;
+        case 'DEACTIVATE_INSPECTION_MODE':
+          this.deactivateInspectionMode();
+          sendResponse({ success: true });
+          break;
+        default:
+          sendResponse({ success: false, error: 'Unknown message type' });
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -205,7 +224,7 @@ export class InspectionModeManager {
     try {
       if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
         const message: ServiceWorkerMessage = {
-          type: messageType
+          type: messageType,
           // tabId is omitted - service worker will determine it from sender
         };
         chrome.runtime.sendMessage(message);

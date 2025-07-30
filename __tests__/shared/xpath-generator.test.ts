@@ -13,6 +13,13 @@
 
 import { XPathGenerator } from '../../src/shared/xpath-generator';
 
+// Mock XPathResult if not defined in JSDOM
+if (typeof XPathResult === 'undefined') {
+  (global as any).XPathResult = {
+    ORDERED_NODE_SNAPSHOT_TYPE: 7
+  };
+}
+
 // Mock DOM environment setup
 const mockDocument = {
   querySelectorAll: jest.fn(),

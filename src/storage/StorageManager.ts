@@ -289,4 +289,18 @@ export class StorageManager {
       throw new Error(`Failed to add to history on copy: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
+
+  /**
+     * Clear all history entries
+     * @throws Error if storage operation fails
+     */
+  async clearHistory(): Promise<void> {
+    try {
+      await chrome.storage.local.set({
+        [STORAGE_KEYS.HISTORY]: []
+      });
+    } catch (error) {
+      throw new Error(`Failed to clear history: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
 }

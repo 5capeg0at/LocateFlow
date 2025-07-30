@@ -140,8 +140,7 @@ class PopupManager {
       const history: LocatorHistoryItem[] = result.locatorHistory || [];
       this.displayHistory(history);
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Failed to load history:', error);
+      logger.error('Failed to load history:', error);
     }
   }
 
@@ -186,8 +185,7 @@ class PopupManager {
       await navigator.clipboard.writeText(text);
       // Could add visual feedback here
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Failed to copy to clipboard:', error);
+      logger.error('Failed to copy to clipboard:', error);
     }
   }
 
@@ -202,8 +200,7 @@ class PopupManager {
       await chrome.storage.local.set({ locatorHistory: [] });
       this.displayHistory([]);
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Failed to clear history:', error);
+      logger.error('Failed to clear history:', error);
     }
   }
 

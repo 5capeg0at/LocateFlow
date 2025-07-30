@@ -3,8 +3,8 @@ module.exports = {
   testEnvironment: 'jsdom',
   roots: ['<rootDir>/__tests__', '<rootDir>/src'],
   testMatch: [
-    '**/__tests__/**/*.test.(js|ts)',
-    '**/?(*.)+(spec|test).(js|ts)'
+    '**/__tests__/**/*.test.@(js|ts)',
+    '**/?(*.)+(spec|test).@(js|ts)'
   ],
   collectCoverageFrom: [
     'src/**/*.{js,ts}',

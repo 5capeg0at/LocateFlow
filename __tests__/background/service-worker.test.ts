@@ -65,6 +65,9 @@ beforeEach(() => {
       },
       onUpdated: {
         addListener: jest.fn()
+      },
+      onRemoved: {
+        addListener: jest.fn()
       }
     }
   };
