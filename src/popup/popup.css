@@ -1,0 +1,349 @@
+/* LocateFlow Popup Styles */
+
+/* Base popup container */
+.popup-container {
+    width: 350px;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Light theme (default) */
+.popup-container.theme-light {
+    background-color: #ffffff;
+    color: #333333;
+    border: 1px solid #e0e0e0;
+}
+
+/* Dark theme */
+.popup-container.theme-dark {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border: 1px solid #404040;
+}
+
+/* Header section */
+.popup-header {
+    padding: 16px;
+    border-bottom: 1px solid;
+    flex-shrink: 0;
+}
+
+.theme-light .popup-header {
+    border-bottom-color: #e0e0e0;
+    background-color: #f8f9fa;
+}
+
+.theme-dark .popup-header {
+    border-bottom-color: #404040;
+    background-color: #2d2d2d;
+}
+
+.popup-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Main content area */
+.popup-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Controls section */
+.popup-controls {
+    padding: 16px;
+    border-bottom: 1px solid;
+    flex-shrink: 0;
+}
+
+.theme-light .popup-controls {
+    border-bottom-color: #e0e0e0;
+}
+
+.theme-dark .popup-controls {
+    border-bottom-color: #404040;
+}
+
+.inspection-toggle-btn {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #007acc;
+    border-radius: 6px;
+    background-color: transparent;
+    color: #007acc;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.inspection-toggle-btn:hover {
+    background-color: #007acc;
+    color: #ffffff;
+}
+
+.inspection-toggle-btn.active {
+    background-color: #007acc;
+    color: #ffffff;
+}
+
+.theme-dark .inspection-toggle-btn {
+    border-color: #4fc3f7;
+    color: #4fc3f7;
+}
+
+.theme-dark .inspection-toggle-btn:hover,
+.theme-dark .inspection-toggle-btn.active {
+    background-color: #4fc3f7;
+    color: #1e1e1e;
+}
+
+/* History section */
+.popup-history {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    overflow: hidden;
+}
+
+.history-title {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.history-list {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 200px;
+    border: 1px solid;
+    border-radius: 4px;
+    padding: 8px;
+    margin-bottom: 12px;
+}
+
+.theme-light .history-list {
+    border-color: #e0e0e0;
+    background-color: #f8f9fa;
+}
+
+.theme-dark .history-list {
+    border-color: #404040;
+    background-color: #2d2d2d;
+}
+
+.clear-history-btn {
+    padding: 8px 16px;
+    border: 1px solid;
+    border-radius: 4px;
+    background-color: transparent;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    align-self: flex-end;
+}
+
+.theme-light .clear-history-btn {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.theme-light .clear-history-btn:hover {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+.theme-dark .clear-history-btn {
+    border-color: #f48fb1;
+    color: #f48fb1;
+}
+
+.theme-dark .clear-history-btn:hover {
+    background-color: #f48fb1;
+    color: #1e1e1e;
+}
+
+/* Footer section */
+.popup-footer {
+    padding: 16px;
+    border-top: 1px solid;
+    flex-shrink: 0;
+}
+
+.theme-light .popup-footer {
+    border-top-color: #e0e0e0;
+    background-color: #f8f9fa;
+}
+
+.theme-dark .popup-footer {
+    border-top-color: #404040;
+    background-color: #2d2d2d;
+}
+
+.settings-btn {
+    width: 100%;
+    padding: 10px 16px;
+    border: 1px solid;
+    border-radius: 4px;
+    background-color: transparent;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.theme-light .settings-btn {
+    border-color: #6c757d;
+    color: #6c757d;
+}
+
+.theme-light .settings-btn:hover {
+    background-color: #6c757d;
+    color: #ffffff;
+}
+
+.theme-dark .settings-btn {
+    border-color: #adb5bd;
+    color: #adb5bd;
+}
+
+.theme-dark .settings-btn:hover {
+    background-color: #adb5bd;
+    color: #1e1e1e;
+}
+
+/* Scrollbar styling for dark theme */
+.theme-dark .history-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.theme-dark .history-list::-webkit-scrollbar-track {
+    background: #2d2d2d;
+}
+
+.theme-dark .history-list::-webkit-scrollbar-thumb {
+    background: #404040;
+    border-radius: 4px;
+}
+
+.theme-dark .history-list::-webkit-scrollbar-thumb:hover {
+    background: #555555;
+}
+
+/* Light theme scrollbar */
+.theme-light .history-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.theme-light .history-list::-webkit-scrollbar-track {
+    background: #f8f9fa;
+}
+
+.theme-light .history-list::-webkit-scrollbar-thumb {
+    background: #e0e0e0;
+    border-radius: 4px;
+}
+
+.theme-light .history-list::-webkit-scrollbar-thumb:hover {
+    background: #cccccc;
+}
+
+/* Hist
+ory item styles */
+.history-item {
+    padding: 8px;
+    margin-bottom: 8px;
+    border: 1px solid;
+    border-radius: 4px;
+    position: relative;
+}
+
+.theme-light .history-item {
+    border-color: #e0e0e0;
+    background-color: #ffffff;
+}
+
+.theme-dark .history-item {
+    border-color: #404040;
+    background-color: #1e1e1e;
+}
+
+.history-locator {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    word-break: break-all;
+    margin-bottom: 4px;
+    padding-right: 60px;
+    /* Space for copy button */
+}
+
+.history-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    opacity: 0.7;
+}
+
+.history-url {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 8px;
+}
+
+.history-time {
+    flex-shrink: 0;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 8px;
+    border: 1px solid;
+    border-radius: 3px;
+    background-color: transparent;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.theme-light .copy-btn {
+    border-color: #007acc;
+    color: #007acc;
+}
+
+.theme-light .copy-btn:hover {
+    background-color: #007acc;
+    color: #ffffff;
+}
+
+.theme-dark .copy-btn {
+    border-color: #4fc3f7;
+    color: #4fc3f7;
+}
+
+.theme-dark .copy-btn:hover {
+    background-color: #4fc3f7;
+    color: #1e1e1e;
+}
+
+.empty-history {
+    text-align: center;
+    opacity: 0.6;
+    font-style: italic;
+    padding: 20px;
+    margin: 0;
+}

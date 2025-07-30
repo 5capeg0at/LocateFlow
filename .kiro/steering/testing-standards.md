@@ -80,3 +80,68 @@ expect(component.state.loading).toBe(false);
 - Integration tests under 1 second each
 - Full test suite under 30 seconds
 - Use beforeAll/afterAll for expensive setup
+## C
+hrome Extension Testing Standards
+
+### Dependency Injection Requirements:
+- All components interacting with browser APIs MUST use dependency injection
+- Components MUST provide default fallbacks to global objects
+- Tests MUST use dependency injection to control external dependencies
+
+### Chrome API Mocking:
+```typescript
+// Required Chrome API mock structure
+const mockChrome = {
+    storage: {
+        local: {
+            get: jest.fn(),
+            set: jest.fn(),
+            clear: jest.fn(),
+            remove: jest.fn()
+        }
+    },
+    runtime: {
+        sendMessage: jest.fn(),
+        openOptionsPage: jest.fn(),
+        onMessage: {
+            addListener: jest.fn(),
+            removeListener: jest.fn()
+        }
+    },
+    tabs: {
+        query: jest.fn(),
+        sendMessage: jest.fn()
+    }
+};
+```
+
+### DOM Testing Standards:
+- Use JSDOM for DOM manipulation tests
+- Create fresh DOM instances for each test
+- Include required HTML structure in test setup
+- Use dependency injection for document/window objects
+
+### Test Environment Setup:
+```typescript
+beforeEach(() => {
+    const dom = new JSDOM(`<!DOCTYPE html><html><body>...</body></html>`);
+    const component = new Component({
+        document: dom.window.document,
+        window: dom.window as unknown as Window,
+        chrome: mockChrome
+    });
+});
+```
+
+### Error Handling Testing:
+- MUST test Chrome API error scenarios
+- MUST verify graceful degradation
+- MUST test storage quota exceeded scenarios
+- MUST test network failure scenarios
+
+### Anti-Patterns to Avoid:
+- Relying on global mocks in component code
+- Testing implementation details instead of behavior
+- Sharing state between tests
+- Complex test setup that obscures test intent
+- Mocking internal modules being tested

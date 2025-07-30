@@ -24,11 +24,11 @@
  * Error categories for different types of extension errors
  */
 export enum ErrorCategory {
-    DOM_ACCESS = 'dom-access',
-    STORAGE = 'storage',
-    CONTENT_SCRIPT_INJECTION = 'content-script-injection',
-    LOCATOR_GENERATION = 'locator-generation',
-    GENERAL = 'general'
+  DOM_ACCESS = 'dom-access',
+  STORAGE = 'storage',
+  CONTENT_SCRIPT_INJECTION = 'content-script-injection',
+  LOCATOR_GENERATION = 'locator-generation',
+  GENERAL = 'general'
 }
 
 /**
@@ -40,43 +40,43 @@ export type ErrorSeverity = 'low' | 'medium' | 'high' | 'critical';
  * Context information for error tracking and debugging
  */
 export interface ErrorContext {
-    component: string;
-    operation: string;
-    tabId?: number;
-    url?: string;
-    timestamp: number;
-    additionalData?: Record<string, any>;
+  component: string;
+  operation: string;
+  tabId?: number;
+  url?: string;
+  timestamp: number;
+  additionalData?: Record<string, any>;
 }
 
 /**
  * Result of error categorization
  */
 export interface ErrorCategorization {
-    category: ErrorCategory;
-    severity: ErrorSeverity;
-    recoverable: boolean;
+  category: ErrorCategory;
+  severity: ErrorSeverity;
+  recoverable: boolean;
 }
 
 /**
  * Result of error handling operations
  */
 export interface ErrorHandlingResult {
-    handled: boolean;
-    fallbackAction: string;
-    userMessage: string;
-    retryCount?: number;
-    alternativeStrategies?: string[];
+  handled: boolean;
+  fallbackAction: string;
+  userMessage: string;
+  retryCount?: number;
+  alternativeStrategies?: string[];
 }
 
 /**
  * Error pattern tracking for pattern recognition
  */
 export interface ErrorPattern {
-    message: string;
-    count: number;
-    component: string;
-    operation: string;
-    lastOccurrence: number;
+  message: string;
+  count: number;
+  component: string;
+  operation: string;
+  lastOccurrence: number;
 }
 
 /**
@@ -90,6 +90,9 @@ export interface ErrorPattern {
  * - Pattern recognition for continuous improvement
  * - Safe error logging that never throws
  */
+
+import { logger } from './logger';
+
 export class ErrorHandler {
   private errorPatterns: Map<string, ErrorPattern> = new Map();
   private readonly MAX_PATTERN_ENTRIES = 100; // Prevent memory leaks
@@ -102,9 +105,9 @@ export class ErrorHandler {
 
     // DOM Access Errors
     if (message.includes('Cannot access property of null') ||
-            message.includes('Element not found') ||
-            message.includes('querySelector') ||
-            message.includes('getElementById')) {
+      message.includes('Element not found') ||
+      message.includes('querySelector') ||
+      message.includes('getElementById')) {
       return {
         category: ErrorCategory.DOM_ACCESS,
         severity: 'medium',
@@ -114,9 +117,9 @@ export class ErrorHandler {
 
     // Storage Errors
     if (message.includes('QuotaExceededError') ||
-            message.includes('Storage quota exceeded') ||
-            message.includes('chrome.storage') ||
-            context.component === 'storage-manager') {
+      message.includes('Storage quota exceeded') ||
+      message.includes('chrome.storage') ||
+      context.component === 'storage-manager') {
       return {
         category: ErrorCategory.STORAGE,
         severity: 'high',
@@ -126,9 +129,9 @@ export class ErrorHandler {
 
     // Content Script Injection Errors
     if (message.includes('Could not establish connection') ||
-            message.includes('Script injection failed') ||
-            message.includes('chrome.scripting') ||
-            context.operation === 'inject-content-script') {
+      message.includes('Script injection failed') ||
+      message.includes('chrome.scripting') ||
+      context.operation === 'inject-content-script') {
       return {
         category: ErrorCategory.CONTENT_SCRIPT_INJECTION,
         severity: 'high',
@@ -138,9 +141,9 @@ export class ErrorHandler {
 
     // Locator Generation Errors
     if (message.includes('Invalid XPath expression') ||
-            message.includes('XPath generation failed') ||
-            message.includes('CSS selector') ||
-            context.component === 'locator-engine') {
+      message.includes('XPath generation failed') ||
+      message.includes('CSS selector') ||
+      context.component === 'locator-engine') {
       return {
         category: ErrorCategory.LOCATOR_GENERATION,
         severity: 'medium',
@@ -176,13 +179,13 @@ export class ErrorHandler {
         ...(error === null && { originalError: null })
       };
 
-      console.error('[LocateFlow Extension Error]', logData);
+      logger.error('[LocateFlow Extension Error]', logData);
 
       // Track error patterns
       this.trackErrorPattern(error, context);
     } catch (loggingError) {
       // Fail gracefully - don't let error logging crash the extension
-      console.error('[LocateFlow Extension Error] Failed to log error:', loggingError);
+      logger.error('[LocateFlow Extension Error] Failed to log error:', loggingError);
     }
   }
 

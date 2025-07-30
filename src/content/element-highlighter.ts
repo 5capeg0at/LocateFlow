@@ -15,6 +15,8 @@
  * - Provides callback system for external integration
  */
 
+import { logger } from '../shared/logger';
+
 export class ElementHighlighter {
   private inspectionMode: boolean = false;
   private currentHighlightedElement: HTMLElement | null = null;
@@ -137,7 +139,7 @@ export class ElementHighlighter {
 
     } catch (error) {
       // Handle errors gracefully - log but don't throw
-      console.warn('ElementHighlighter: Failed to highlight element', error);
+      logger.warn('ElementHighlighter: Failed to highlight element', error);
       this.currentHighlightedElement = null;
       this.currentOverlay = null;
     }
@@ -152,7 +154,7 @@ export class ElementHighlighter {
         this.currentOverlay.remove();
       } catch (error) {
         // Handle removal errors gracefully
-        console.warn('ElementHighlighter: Failed to remove overlay', error);
+        logger.warn('ElementHighlighter: Failed to remove overlay', error);
       }
     }
 

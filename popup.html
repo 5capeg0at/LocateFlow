@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocateFlow</title>
+    <link rel="stylesheet" href="src/popup/popup.css">
+</head>
+
+<body>
+    <div class="popup-container theme-light">
+        <header class="popup-header">
+            <h1 class="popup-title">LocateFlow</h1>
+        </header>
+
+        <main class="popup-main">
+            <section class="popup-controls">
+                <button id="inspection-toggle" type="button" class="inspection-toggle-btn">
+                    Start Inspection
+                </button>
+            </section>
+
+            <section class="popup-history">
+                <h2 class="history-title">Recent Locators</h2>
+                <div id="history-list" class="history-list">
+                    <!-- History items will be populated by JavaScript -->
+                </div>
+                <button id="clear-history" type="button" class="clear-history-btn">
+                    Clear History
+                </button>
+            </section>
+        </main>
+
+        <footer class="popup-footer">
+            <button id="settings-button" type="button" class="settings-btn">
+                Settings
+            </button>
+        </footer>
+    </div>
+
+    <script src="dist/popup.js"></script>
+</body>
+
+</html>

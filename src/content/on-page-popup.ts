@@ -15,13 +15,14 @@
  */
 
 import { LocatorStrategy } from '../shared/data-models';
+import { logger } from '../shared/logger';
 
 /**
  * Position coordinates for popup placement
  */
 export interface PopupPosition {
-    x: number;
-    y: number;
+  x: number;
+  y: number;
 }
 
 /**
@@ -40,236 +41,236 @@ export type CopyCallback = (selector: string, type: string) => void;
  * - ARIA snapshot generation
  */
 export class OnPagePopup {
-    private keydownHandler: ((event: KeyboardEvent) => void) | null = null;
-    private copyCallback: CopyCallback | null = null;
+  private keydownHandler: ((event: KeyboardEvent) => void) | null = null;
+  private copyCallback: CopyCallback | null = null;
 
-    /**
+  /**
      * Shows the popup at the specified position with given locator strategies
      * 
      * @param position - Coordinates where to display the popup
      * @param strategies - Array of locator strategies to display
      */
-    public show(position: PopupPosition, strategies: LocatorStrategy[]): void {
-        // Remove existing popup if present
-        this.hide();
+  public show(position: PopupPosition, strategies: LocatorStrategy[]): void {
+    // Remove existing popup if present
+    this.hide();
 
-        // Create popup container
-        const container = document.createElement('div');
-        container.id = 'locateflow-popup';
-        container.className = 'locateflow-popup';
+    // Create popup container
+    const container = document.createElement('div');
+    container.id = 'locateflow-popup';
+    container.className = 'locateflow-popup';
 
-        // Position popup with smart placement
-        this.positionPopup(container, position);
+    // Position popup with smart placement
+    this.positionPopup(container, position);
 
-        // Create tabbed interface
-        this.createTabbedInterface(container, strategies);
+    // Create tabbed interface
+    this.createTabbedInterface(container, strategies);
 
-        // Add to DOM
-        document.body.appendChild(container);
+    // Add to DOM
+    document.body.appendChild(container);
 
-        // Register keyboard event listener
-        this.registerKeyboardHandlers();
-    }
+    // Register keyboard event listener
+    this.registerKeyboardHandlers();
+  }
 
-    /**
+  /**
      * Hides the popup and cleans up event listeners
      */
-    public hide(): void {
-        const existingPopup = document.getElementById('locateflow-popup');
-        if (existingPopup) {
-            existingPopup.remove();
-        }
-
-        // Remove keyboard event listener
-        if (this.keydownHandler) {
-            document.removeEventListener('keydown', this.keydownHandler);
-            this.keydownHandler = null;
-        }
+  public hide(): void {
+    const existingPopup = document.getElementById('locateflow-popup');
+    if (existingPopup) {
+      existingPopup.remove();
     }
 
-    /**
+    // Remove keyboard event listener
+    if (this.keydownHandler) {
+      document.removeEventListener('keydown', this.keydownHandler);
+      this.keydownHandler = null;
+    }
+  }
+
+  /**
      * Registers a callback function for copy operations
      * 
      * @param callback - Function to call when a locator is copied
      */
-    public onCopy(callback: CopyCallback): void {
-        this.copyCallback = callback;
-    }
+  public onCopy(callback: CopyCallback): void {
+    this.copyCallback = callback;
+  }
 
-    /**
+  /**
      * Positions the popup container with smart placement logic
      * 
      * @param container - The popup container element
      * @param position - Desired position coordinates
      */
-    private positionPopup(container: HTMLElement, position: PopupPosition): void {
-        container.style.position = 'fixed';
-        container.style.zIndex = '2147483647'; // Maximum z-index
+  private positionPopup(container: HTMLElement, position: PopupPosition): void {
+    container.style.position = 'fixed';
+    container.style.zIndex = '2147483647'; // Maximum z-index
 
-        // Default positioning with offset
-        let left = position.x + 10;
-        let top = position.y + 10;
+    // Default positioning with offset
+    let left = position.x + 10;
+    let top = position.y + 10;
 
-        // Adjust for screen edges after container is created
-        // Note: In real implementation, we'd need to measure container dimensions
-        // For now, using estimated dimensions for edge detection
-        const estimatedWidth = 300;
-        const estimatedHeight = 200;
+    // Adjust for screen edges after container is created
+    // Note: In real implementation, we'd need to measure container dimensions
+    // For now, using estimated dimensions for edge detection
+    const estimatedWidth = 300;
+    const estimatedHeight = 200;
 
-        if (left + estimatedWidth > window.innerWidth) {
-            left = position.x - estimatedWidth - 10;
-        }
-
-        if (top + estimatedHeight > window.innerHeight) {
-            top = position.y - estimatedHeight - 10;
-        }
-
-        container.style.left = `${left}px`;
-        container.style.top = `${top}px`;
+    if (left + estimatedWidth > window.innerWidth) {
+      left = position.x - estimatedWidth - 10;
     }
 
-    /**
+    if (top + estimatedHeight > window.innerHeight) {
+      top = position.y - estimatedHeight - 10;
+    }
+
+    container.style.left = `${left}px`;
+    container.style.top = `${top}px`;
+  }
+
+  /**
      * Creates the tabbed interface structure
      * 
      * @param container - The popup container element
      * @param strategies - Array of locator strategies to display
      */
-    private createTabbedInterface(container: HTMLElement, strategies: LocatorStrategy[]): void {
-        // Create tab container
-        const tabContainer = document.createElement('div');
-        tabContainer.className = 'locateflow-tabs';
+  private createTabbedInterface(container: HTMLElement, strategies: LocatorStrategy[]): void {
+    // Create tab container
+    const tabContainer = document.createElement('div');
+    tabContainer.className = 'locateflow-tabs';
 
-        // Create content container
-        const contentContainer = document.createElement('div');
-        contentContainer.className = 'locateflow-content';
+    // Create content container
+    const contentContainer = document.createElement('div');
+    contentContainer.className = 'locateflow-content';
 
-        // Create tabs
-        this.createTabs(tabContainer);
+    // Create tabs
+    this.createTabs(tabContainer);
 
-        // Create tab content
-        this.createTabContent(contentContainer, strategies);
+    // Create tab content
+    this.createTabContent(contentContainer, strategies);
 
-        // Add to popup container
-        container.appendChild(tabContainer);
-        container.appendChild(contentContainer);
-    }
+    // Add to popup container
+    container.appendChild(tabContainer);
+    container.appendChild(contentContainer);
+  }
 
-    /**
+  /**
      * Creates the tab buttons
      * 
      * @param tabContainer - Container for tab buttons
      */
-    private createTabs(tabContainer: HTMLElement): void {
-        // Create Locators tab
-        const locatorsTab = document.createElement('div');
-        locatorsTab.className = 'locateflow-tab active';
-        locatorsTab.textContent = 'Locators (1)';
-        locatorsTab.dataset.tabId = 'locators';
-        locatorsTab.addEventListener('click', () => this.switchTab('locators'));
+  private createTabs(tabContainer: HTMLElement): void {
+    // Create Locators tab
+    const locatorsTab = document.createElement('div');
+    locatorsTab.className = 'locateflow-tab active';
+    locatorsTab.textContent = 'Locators (1)';
+    locatorsTab.dataset.tabId = 'locators';
+    locatorsTab.addEventListener('click', () => this.switchTab('locators'));
 
-        // Create ARIA tab
-        const ariaTab = document.createElement('div');
-        ariaTab.className = 'locateflow-tab';
-        ariaTab.textContent = 'ARIA (2)';
-        ariaTab.dataset.tabId = 'aria';
-        ariaTab.addEventListener('click', () => this.switchTab('aria'));
+    // Create ARIA tab
+    const ariaTab = document.createElement('div');
+    ariaTab.className = 'locateflow-tab';
+    ariaTab.textContent = 'ARIA (2)';
+    ariaTab.dataset.tabId = 'aria';
+    ariaTab.addEventListener('click', () => this.switchTab('aria'));
 
-        tabContainer.appendChild(locatorsTab);
-        tabContainer.appendChild(ariaTab);
-    }
+    tabContainer.appendChild(locatorsTab);
+    tabContainer.appendChild(ariaTab);
+  }
 
-    /**
+  /**
      * Creates the content areas for each tab
      * 
      * @param contentContainer - Container for tab content
      * @param strategies - Array of locator strategies to display
      */
-    private createTabContent(contentContainer: HTMLElement, strategies: LocatorStrategy[]): void {
-        // Create locators content
-        const locatorsContent = this.createLocatorsContent(strategies);
-        locatorsContent.id = 'locateflow-content-locators';
-        locatorsContent.style.display = 'block'; // Initially visible
+  private createTabContent(contentContainer: HTMLElement, strategies: LocatorStrategy[]): void {
+    // Create locators content
+    const locatorsContent = this.createLocatorsContent(strategies);
+    locatorsContent.id = 'locateflow-content-locators';
+    locatorsContent.style.display = 'block'; // Initially visible
 
-        // Create ARIA content
-        const ariaContent = this.createAriaContent();
-        ariaContent.id = 'locateflow-content-aria';
-        ariaContent.style.display = 'none'; // Initially hidden
+    // Create ARIA content
+    const ariaContent = this.createAriaContent();
+    ariaContent.id = 'locateflow-content-aria';
+    ariaContent.style.display = 'none'; // Initially hidden
 
-        contentContainer.appendChild(locatorsContent);
-        contentContainer.appendChild(ariaContent);
-    }
+    contentContainer.appendChild(locatorsContent);
+    contentContainer.appendChild(ariaContent);
+  }
 
-    /**
+  /**
      * Creates the locators tab content
      * 
      * @param strategies - Array of locator strategies to display
      * @returns The locators content element
      */
-    private createLocatorsContent(strategies: LocatorStrategy[]): HTMLElement {
-        const locatorsList = document.createElement('div');
-        locatorsList.className = 'locateflow-locators';
+  private createLocatorsContent(strategies: LocatorStrategy[]): HTMLElement {
+    const locatorsList = document.createElement('div');
+    locatorsList.className = 'locateflow-locators';
 
-        // Create elements programmatically to avoid HTML parsing issues
-        strategies.forEach(strategy => {
-            const locatorItem = document.createElement('div');
-            locatorItem.className = 'locator-item';
+    // Create elements programmatically to avoid HTML parsing issues
+    strategies.forEach(strategy => {
+      const locatorItem = document.createElement('div');
+      locatorItem.className = 'locator-item';
 
-            const locatorInfo = document.createElement('div');
-            locatorInfo.className = 'locator-info';
+      const locatorInfo = document.createElement('div');
+      locatorInfo.className = 'locator-info';
 
-            const typeSpan = document.createElement('span');
-            typeSpan.className = 'locator-type';
-            typeSpan.textContent = strategy.type.toUpperCase();
+      const typeSpan = document.createElement('span');
+      typeSpan.className = 'locator-type';
+      typeSpan.textContent = strategy.type.toUpperCase();
 
-            const selectorSpan = document.createElement('span');
-            selectorSpan.className = 'locator-selector';
-            selectorSpan.textContent = strategy.selector;
+      const selectorSpan = document.createElement('span');
+      selectorSpan.className = 'locator-selector';
+      selectorSpan.textContent = strategy.selector;
 
-            const scoreSpan = document.createElement('span');
-            scoreSpan.className = 'confidence-score';
-            scoreSpan.textContent = `${strategy.confidence.score}%`;
+      const scoreSpan = document.createElement('span');
+      scoreSpan.className = 'confidence-score';
+      scoreSpan.textContent = `${strategy.confidence.score}%`;
 
-            const copyButton = document.createElement('button');
-            copyButton.className = 'copy-button';
-            copyButton.textContent = 'Copy';
-            copyButton.dataset.selector = strategy.selector;
-            copyButton.dataset.type = strategy.type;
+      const copyButton = document.createElement('button');
+      copyButton.className = 'copy-button';
+      copyButton.textContent = 'Copy';
+      copyButton.dataset.selector = strategy.selector;
+      copyButton.dataset.type = strategy.type;
 
-            locatorInfo.appendChild(typeSpan);
-            locatorInfo.appendChild(selectorSpan);
-            locatorInfo.appendChild(scoreSpan);
+      locatorInfo.appendChild(typeSpan);
+      locatorInfo.appendChild(selectorSpan);
+      locatorInfo.appendChild(scoreSpan);
 
-            locatorItem.appendChild(locatorInfo);
-            locatorItem.appendChild(copyButton);
+      locatorItem.appendChild(locatorInfo);
+      locatorItem.appendChild(copyButton);
 
-            locatorsList.appendChild(locatorItem);
-        });
+      locatorsList.appendChild(locatorItem);
+    });
 
-        // Add click handler for copy buttons
-        locatorsList.addEventListener('click', (event) => {
-            const target = event.target as HTMLElement;
-            if (target.classList.contains('copy-button')) {
-                const selector = target.dataset.selector;
-                const type = target.dataset.type;
-                if (selector && type && this.copyCallback) {
-                    this.copyCallback(selector, type);
-                }
-            }
-        });
+    // Add click handler for copy buttons
+    locatorsList.addEventListener('click', (event) => {
+      const target = event.target as HTMLElement;
+      if (target.classList.contains('copy-button')) {
+        const selector = target.dataset.selector;
+        const type = target.dataset.type;
+        if (selector && type && this.copyCallback) {
+          this.copyCallback(selector, type);
+        }
+      }
+    });
 
-        return locatorsList;
-    }
+    return locatorsList;
+  }
 
-    /**
+  /**
      * Creates the ARIA tab content
      * 
      * @returns The ARIA content element
      */
-    private createAriaContent(): HTMLElement {
-        const ariaContent = document.createElement('div');
-        ariaContent.className = 'locateflow-aria-content';
+  private createAriaContent(): HTMLElement {
+    const ariaContent = document.createElement('div');
+    ariaContent.className = 'locateflow-aria-content';
 
-        ariaContent.innerHTML = `
+    ariaContent.innerHTML = `
       <div class="aria-section">
         <h3>ARIA Snapshot</h3>
         <p>Generate a detailed accessibility snapshot of the selected element.</p>
@@ -279,116 +280,116 @@ export class OnPagePopup {
       </div>
     `;
 
-        return ariaContent;
-    }
+    return ariaContent;
+  }
 
-    /**
+  /**
      * Switches to the specified tab
      * 
      * @param tabId - ID of the tab to switch to
      */
-    private switchTab(tabId: string): void {
-        // Update tab active states
-        const tabs = document.querySelectorAll('.locateflow-tab');
-        tabs.forEach(tab => {
-            const element = tab as HTMLElement;
-            if (element.dataset.tabId === tabId) {
-                element.className = 'locateflow-tab active';
-            } else {
-                element.className = 'locateflow-tab';
-            }
-        });
+  private switchTab(tabId: string): void {
+    // Update tab active states
+    const tabs = document.querySelectorAll('.locateflow-tab');
+    tabs.forEach(tab => {
+      const element = tab as HTMLElement;
+      if (element.dataset.tabId === tabId) {
+        element.className = 'locateflow-tab active';
+      } else {
+        element.className = 'locateflow-tab';
+      }
+    });
 
-        // Update content visibility
-        const locatorsContent = document.getElementById('locateflow-content-locators');
-        const ariaContent = document.getElementById('locateflow-content-aria');
+    // Update content visibility
+    const locatorsContent = document.getElementById('locateflow-content-locators');
+    const ariaContent = document.getElementById('locateflow-content-aria');
 
-        if (locatorsContent && ariaContent) {
-            if (tabId === 'locators') {
-                locatorsContent.style.display = 'block';
-                ariaContent.style.display = 'none';
-            } else if (tabId === 'aria') {
-                locatorsContent.style.display = 'none';
-                ariaContent.style.display = 'block';
-            }
-        }
+    if (locatorsContent && ariaContent) {
+      if (tabId === 'locators') {
+        locatorsContent.style.display = 'block';
+        ariaContent.style.display = 'none';
+      } else if (tabId === 'aria') {
+        locatorsContent.style.display = 'none';
+        ariaContent.style.display = 'block';
+      }
     }
+  }
 
-    /**
+  /**
      * Registers keyboard event handlers for hotkey support
      */
-    private registerKeyboardHandlers(): void {
-        this.keydownHandler = (event: KeyboardEvent) => {
-            // Handle number keys 1-9 for tab switching
-            if (event.key >= '1' && event.key <= '9') {
-                const tabNumber = parseInt(event.key);
-                let tabId = '';
+  private registerKeyboardHandlers(): void {
+    this.keydownHandler = (event: KeyboardEvent) => {
+      // Handle number keys 1-9 for tab switching
+      if (event.key >= '1' && event.key <= '9') {
+        const tabNumber = parseInt(event.key);
+        let tabId = '';
 
-                switch (tabNumber) {
-                    case 1:
-                        tabId = 'locators';
-                        break;
-                    case 2:
-                        tabId = 'aria';
-                        break;
-                    default:
-                        return; // Ignore other numbers for now
-                }
+        switch (tabNumber) {
+        case 1:
+          tabId = 'locators';
+          break;
+        case 2:
+          tabId = 'aria';
+          break;
+        default:
+          return; // Ignore other numbers for now
+        }
 
-                // Find and click the corresponding tab
-                const tab = document.querySelector(`[data-tab-id="${tabId}"]`) as HTMLElement;
-                if (tab) {
-                    event.preventDefault();
-                    tab.click();
-                }
-            }
-        };
+        // Find and click the corresponding tab
+        const tab = document.querySelector(`[data-tab-id="${tabId}"]`) as HTMLElement;
+        if (tab) {
+          event.preventDefault();
+          tab.click();
+        }
+      }
+    };
 
-        document.addEventListener('keydown', this.keydownHandler);
-    }
+    document.addEventListener('keydown', this.keydownHandler);
+  }
 
-    /**
+  /**
      * Copies text to clipboard using the Clipboard API
      * 
      * @param text - Text to copy to clipboard
      * @returns Promise that resolves when copy is complete
      */
-    public async copyToClipboard(text: string): Promise<void> {
-        try {
-            await navigator.clipboard.writeText(text);
-        } catch (error) {
-            // Handle clipboard errors gracefully - could fallback to execCommand
-            console.warn('Failed to copy to clipboard:', error);
-        }
+  public async copyToClipboard(text: string): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (error) {
+      // Handle clipboard errors gracefully - could fallback to execCommand
+      logger.warn('Failed to copy to clipboard:', error);
     }
+  }
 
-    /**
+  /**
      * Gets the highest-rated locator selector from strategies
      * 
      * @param strategies - Array of locator strategies
      * @returns The selector string of the highest-rated strategy
      */
-    public getHighestRatedLocator(strategies: LocatorStrategy[]): string {
-        if (strategies.length === 0) {
-            return '';
-        }
-
-        // Strategies should already be sorted by confidence score (highest first)
-        return strategies[0].selector;
+  public getHighestRatedLocator(strategies: LocatorStrategy[]): string {
+    if (strategies.length === 0) {
+      return '';
     }
 
-    /**
+    // Strategies should already be sorted by confidence score (highest first)
+    return strategies[0].selector;
+  }
+
+  /**
      * Auto-copies the highest-rated locator to clipboard
      * 
      * @param strategies - Array of locator strategies
      * @returns Promise that resolves when copy is complete
      */
-    public async autoCopyHighestRatedLocator(strategies: LocatorStrategy[]): Promise<void> {
-        const highestRatedSelector = this.getHighestRatedLocator(strategies);
-        if (highestRatedSelector) {
-            await this.copyToClipboard(highestRatedSelector);
-        }
+  public async autoCopyHighestRatedLocator(strategies: LocatorStrategy[]): Promise<void> {
+    const highestRatedSelector = this.getHighestRatedLocator(strategies);
+    if (highestRatedSelector) {
+      await this.copyToClipboard(highestRatedSelector);
     }
+  }
 
 
 }
