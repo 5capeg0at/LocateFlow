@@ -515,6 +515,7 @@ export class OnPagePopup {
   private handleAriaSnapshotGeneration(): void {
     if (!this.currentElement) {
       logger.warn('No element available for ARIA snapshot generation');
+      this.showNotification('No element selected for ARIA snapshot generation', 'error');
       return;
     }
 
@@ -522,11 +523,96 @@ export class OnPagePopup {
       // Generate ARIA snapshot
       const snapshot = this.ariaGenerator.generateAriaSnapshot(this.currentElement);
 
-      // Display snapshot in new window
-      this.ariaEngine.displaySnapshotInNewWindow(snapshot);
+      // Display snapshot in new window - we need to handle popup blocking ourselves
+      // since the engine method doesn't return the window reference
+      try {
+        this.ariaEngine.displaySnapshotInNewWindow(snapshot);
+        this.showNotification('ARIA snapshot generated successfully!', 'success');
+      } catch (popupError) {
+        // Check if it's a popup blocker issue
+        if (popupError instanceof Error && popupError.message.includes('popup')) {
+          this.showNotification('ARIA snapshot generated, but popup was blocked. Please allow popups for this site and try again.', 'warning');
+        } else {
+          throw popupError; // Re-throw if it's a different error
+        }
+      }
     } catch (error) {
       logger.error('Failed to generate ARIA snapshot:', error);
+      this.showNotification('Failed to generate ARIA snapshot. Please try again.', 'error');
     }
+  }
+
+  /**
+   * Shows a notification message to the user
+   * 
+   * @param message - The message to display
+   * @param type - The type of notification (success, warning, error)
+   */
+  private showNotification(message: string, type: 'success' | 'warning' | 'error'): void {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `locateflow-notification notification-${type}`;
+    notification.textContent = message;
+
+    // Style the notification
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 16px;
+      border-radius: 4px;
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px;
+      z-index: 2147483647;
+      max-width: 300px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      animation: slideIn 0.3s ease-out;
+    `;
+
+    // Set background color based on type
+    switch (type) {
+      case 'success':
+        notification.style.backgroundColor = '#10b981';
+        break;
+      case 'warning':
+        notification.style.backgroundColor = '#f59e0b';
+        break;
+      case 'error':
+        notification.style.backgroundColor = '#ef4444';
+        break;
+    }
+
+    // Add animation styles
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Add to DOM
+    document.body.appendChild(notification);
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.style.animation = 'slideIn 0.3s ease-out reverse';
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 300);
+      }
+    }, 5000);
   }
 
   /**
@@ -536,6 +622,22 @@ export class OnPagePopup {
   public generateAriaSnapshotForTesting(element: HTMLElement): void {
     this.currentElement = element;
     this.handleAriaSnapshotGeneration();
+  }
+
+  /**
+   * Public testing API to get the ARIA generator instance
+   * @returns The ARIA locator generator instance
+   */
+  public getAriaGeneratorForTesting(): AriaLocatorGenerator {
+    return this.ariaGenerator;
+  }
+
+  /**
+   * Public testing API to get the ARIA engine instance
+   * @returns The ARIA analysis engine instance
+   */
+  public getAriaEngineForTesting(): AriaAnalysisEngine {
+    return this.ariaEngine;
   }
 
 }

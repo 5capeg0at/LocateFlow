@@ -300,8 +300,18 @@ describe('AriaAnalysisEngine', () => {
                 hierarchy: []
             };
 
-            // Act & Assert
-            expect(() => engine.displaySnapshotInNewWindow(snapshot)).toThrow('Failed to open new window');
+            // Mock alert to verify user-friendly notification
+            const mockAlert = jest.spyOn(window, 'alert').mockImplementation(() => { });
+
+            // Act
+            engine.displaySnapshotInNewWindow(snapshot);
+
+            // Assert - should not throw, should show user-friendly notification
+            expect(mockAlert).toHaveBeenCalledWith(
+                expect.stringContaining('Unable to open ARIA snapshot window')
+            );
+
+            mockAlert.mockRestore();
         });
 
         test('should handle null snapshot gracefully', () => {
@@ -362,6 +372,10 @@ describe('AriaAnalysisEngine', () => {
             const jsonExport = engine.exportSnapshotAsJSON(snapshot);
 
             // Assert
+            // First verify it's valid JSON
+            expect(() => JSON.parse(jsonExport)).not.toThrow();
+
+            // Then check content
             expect(jsonExport).toContain('"element": "button"');
             expect(jsonExport).toContain('"aria-label": "Export data"');
             expect(jsonExport).toContain('"accessibleName": "Export data"');
@@ -412,6 +426,31 @@ describe('AriaAnalysisEngine', () => {
             expect(htmlContent).toContain('Export as JSON');
             expect(htmlContent).toContain('Export as CSV');
             expect(htmlContent).toContain('onclick');
+        });
+
+        test('should properly escape CSV special characters', () => {
+            // Arrange
+            const snapshot: AriaSnapshot = {
+                element: 'input',
+                ariaAttributes: {
+                    'aria-label': 'Name, First and Last',
+                    'aria-describedby': 'Contains "quotes" and commas',
+                    'aria-placeholder': 'Line 1\nLine 2'
+                },
+                accessibleName: 'Name, First and Last',
+                accessibleDescription: 'Contains "quotes" and commas',
+                role: 'textbox',
+                states: [],
+                hierarchy: []
+            };
+
+            // Act
+            const csvExport = engine.exportSnapshotAsCSV(snapshot);
+
+            // Assert
+            expect(csvExport).toContain('"Name, First and Last"'); // Comma escaped
+            expect(csvExport).toContain('"Contains ""quotes"" and commas"'); // Quotes escaped
+            expect(csvExport).toContain('"Line 1\nLine 2"'); // Newline escaped
         });
     });
 });

@@ -56,6 +56,9 @@ export class OptionsPageManager {
     this.init().catch(error => {
       // eslint-disable-next-line no-console
       console.error('Failed to initialize options page:', error);
+
+      // Show user-visible error message
+      this.showInitializationError('Failed to initialize options page. Please refresh the page and try again.');
     });
   }
 
@@ -573,6 +576,48 @@ export class OptionsPageManager {
     this.validationErrors.classList.add('hidden');
     this.validationErrors.style.backgroundColor = '';
     this.validationErrors.innerHTML = '';
+  }
+
+  /**
+   * Show initialization error message to user
+   * This method handles cases where the page fails to initialize properly
+   */
+  private showInitializationError(message: string): void {
+    // Try to find or create an error display element
+    let errorElement = this.document.querySelector('.initialization-error') as HTMLElement;
+
+    if (!errorElement) {
+      // Create error element if it doesn't exist
+      errorElement = this.document.createElement('div');
+      errorElement.className = 'initialization-error';
+      errorElement.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #ef4444;
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-size: 14px;
+        z-index: 9999;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        max-width: 90%;
+        text-align: center;
+      `;
+
+      // Insert at the beginning of body
+      this.document.body.insertBefore(errorElement, this.document.body.firstChild);
+    }
+
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+
+    // Also show browser alert as fallback
+    setTimeout(() => {
+      alert(message);
+    }, 100);
   }
 
   /**

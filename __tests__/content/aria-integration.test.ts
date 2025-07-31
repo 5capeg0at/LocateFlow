@@ -21,19 +21,7 @@ import { AriaLocatorGenerator } from '../../src/shared/aria-locator-generator';
 import { LocatorStrategy } from '../../src/shared/data-models';
 
 // Mock DOM environment setup
-const dom = new JSDOM(`
-<!DOCTYPE html>
-<html>
-<body>
-  <button id="submit-btn" aria-label="Submit form" role="button">Submit</button>
-  <input type="text" aria-label="Username" aria-required="true" name="username">
-  <div role="dialog" aria-labelledby="dialog-title">
-    <h2 id="dialog-title">Confirmation Dialog</h2>
-    <button aria-label="Close dialog">Close</button>
-  </div>
-</body>
-</html>
-`);
+const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
 
 global.document = dom.window.document;
 global.window = dom.window as any;
@@ -55,7 +43,7 @@ describe('ARIA Integration with Main Workflow', () => {
     let mockWindow: any;
 
     beforeEach(() => {
-        // Reset DOM and mocks
+        // Set up DOM content for each test
         document.body.innerHTML = `
       <button id="submit-btn" aria-label="Submit form" role="button">Submit</button>
       <input type="text" aria-label="Username" aria-required="true" name="username">
@@ -109,8 +97,8 @@ describe('ARIA Integration with Main Workflow', () => {
             // Arrange
             const element = document.getElementById('submit-btn') as HTMLElement;
             const strategies: LocatorStrategy[] = [];
-            // Spy on the popup's internal instances
-            const mockGenerateSnapshot = jest.spyOn((popup as any).ariaGenerator, 'generateAriaSnapshot');
+            // Spy on the popup's ARIA generator using public testing API
+            const mockGenerateSnapshot = jest.spyOn(popup.getAriaGeneratorForTesting(), 'generateAriaSnapshot');
 
             // Act
             popup.show({ x: 100, y: 100 }, strategies, element);
@@ -128,8 +116,8 @@ describe('ARIA Integration with Main Workflow', () => {
             // Arrange
             const element = document.getElementById('submit-btn') as HTMLElement;
             const strategies: LocatorStrategy[] = [];
-            // Spy on the popup's internal instances
-            const mockDisplaySnapshot = jest.spyOn((popup as any).ariaEngine, 'displaySnapshotInNewWindow');
+            // Spy on the popup's ARIA engine using public testing API
+            const mockDisplaySnapshot = jest.spyOn(popup.getAriaEngineForTesting(), 'displaySnapshotInNewWindow');
 
             // Act
             popup.show({ x: 100, y: 100 }, strategies, element);

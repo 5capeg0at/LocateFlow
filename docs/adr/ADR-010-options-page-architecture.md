@@ -60,6 +60,9 @@ export interface OptionsPageDependencies {
 }
 
 export class OptionsPageManager {
+  private document: Document;
+  private chrome: typeof chrome;
+
   constructor(dependencies: OptionsPageDependencies = {}) {
     this.document = dependencies.document || document;
     this.chrome = dependencies.chrome || chrome;

@@ -44,7 +44,7 @@ export class AriaAnalysisEngine {
     /**
      * Displays ARIA snapshot in a new browser window
      * @param snapshot - The ARIA snapshot to display
-     * @throws Error if window cannot be opened or content cannot be written
+     * @throws Error if snapshot is null or content cannot be written
      */
     displaySnapshotInNewWindow(snapshot: AriaSnapshot): void {
         if (!snapshot) {
@@ -59,7 +59,9 @@ export class AriaAnalysisEngine {
         );
 
         if (!newWindow) {
-            throw new Error('Failed to open new window');
+            // Provide user-friendly feedback instead of throwing error
+            this.showPopupBlockerNotification();
+            return;
         }
 
         try {
@@ -181,13 +183,13 @@ export class AriaAnalysisEngine {
 
         // Add ARIA attributes
         for (const [key, value] of Object.entries(snapshot.ariaAttributes)) {
-            lines.push(`${key},${value}`);
+            lines.push(`${this.escapeCsvValue(key)},${this.escapeCsvValue(value)}`);
         }
 
         // Add other properties
-        lines.push(`element,${snapshot.element}`);
-        lines.push(`accessibleName,${snapshot.accessibleName}`);
-        lines.push(`role,${snapshot.role}`);
+        lines.push(`element,${this.escapeCsvValue(snapshot.element)}`);
+        lines.push(`accessibleName,${this.escapeCsvValue(snapshot.accessibleName)}`);
+        lines.push(`role,${this.escapeCsvValue(snapshot.role)}`);
 
         return lines.join('\n');
     }
@@ -195,6 +197,49 @@ export class AriaAnalysisEngine {
     // ========================================================================
     // PRIVATE HELPER METHODS
     // ========================================================================
+
+    /**
+     * Escapes CSV values that contain special characters
+     * @param value - The value to escape
+     * @returns Properly escaped CSV value
+     */
+    private escapeCsvValue(value: string): string {
+        if (!value) return '';
+
+        // Check if value contains special characters that require escaping
+        if (value.includes(',') || value.includes('"') || value.includes('\n') || value.includes('\r')) {
+            // Escape internal quotes by doubling them
+            const escapedValue = value.replace(/"/g, '""');
+            // Wrap in quotes
+            return `"${escapedValue}"`;
+        }
+
+        return value;
+    }
+
+    /**
+     * Escapes HTML special characters to prevent XSS
+     * @param text - The text to escape
+     * @returns HTML-escaped text
+     */
+    private escapeHtml(text: string): string {
+        if (!text) return '';
+
+        return text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#x27;');
+    }
+
+    /**
+     * Shows user-friendly notification when popup is blocked
+     */
+    private showPopupBlockerNotification(): void {
+        // Use alert as a fallback - in a real implementation, this could be a toast notification
+        alert('Unable to open ARIA snapshot window. Please check if your browser is blocking popups and allow them for this site to view the accessibility snapshot.');
+    }
 
     /**
      * Generates CSS styles for the snapshot display
@@ -330,14 +375,18 @@ export class AriaAnalysisEngine {
         const csvData = this.exportSnapshotAsCSV(snapshot);
 
         return `
+<script type="application/json" id="aria-json-data">${this.escapeHtml(jsonData)}</script>
+<script type="text/csv" id="aria-csv-data">${this.escapeHtml(csvData)}</script>
 <script>
     function exportAsJSON() {
-        const data = ${JSON.stringify(jsonData)};
+        const dataElement = document.getElementById('aria-json-data');
+        const data = dataElement ? dataElement.textContent : '';
         downloadFile(data, 'aria-snapshot.json', 'application/json');
     }
     
     function exportAsCSV() {
-        const data = ${JSON.stringify(csvData)};
+        const dataElement = document.getElementById('aria-csv-data');
+        const data = dataElement ? dataElement.textContent : '';
         downloadFile(data, 'aria-snapshot.csv', 'text/csv');
     }
     
