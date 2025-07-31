@@ -32,6 +32,7 @@
 import { LocatorData, ElementInfo, LocatorStrategy, ElementPosition } from '../shared/data-models';
 import { CSSelectorGenerator } from '../shared/css-selector-generator';
 import { XPathGenerator } from '../shared/xpath-generator';
+import { AriaLocatorGenerator } from '../shared/aria-locator-generator';
 import { logger } from '../shared/logger';
 
 /**
@@ -42,10 +43,12 @@ export class ElementSelector {
   private elementHoveredCallbacks: ((elementInfo: ElementInfo) => void)[] = [];
   private cssGenerator: CSSelectorGenerator;
   private xpathGenerator: XPathGenerator;
+  private ariaGenerator: AriaLocatorGenerator;
 
   constructor() {
     this.cssGenerator = new CSSelectorGenerator();
     this.xpathGenerator = new XPathGenerator();
+    this.ariaGenerator = new AriaLocatorGenerator();
   }
 
   /**
@@ -210,9 +213,13 @@ export class ElementSelector {
     // Generate Tag locator
     strategies.push(this.generateTagLocator(element));
 
-    // Generate ARIA locators if available
-    const ariaLocators = this.generateAriaLocators(element);
-    strategies.push(...ariaLocators);
+    // Generate ARIA locators using the full ARIA generator
+    try {
+      const ariaStrategies = this.ariaGenerator.generateAllAriaStrategies(element);
+      strategies.push(...ariaStrategies);
+    } catch (error) {
+      logger.warn('ARIA locator generation failed:', error);
+    }
 
     // Sort by confidence score (highest first)
     return strategies.sort((a, b) => b.confidence.score - a.confidence.score);
@@ -398,66 +405,5 @@ export class ElementSelector {
     };
   }
 
-  /**
-     * Generate ARIA-based locator strategies
-     */
-  private generateAriaLocators(element: HTMLElement): LocatorStrategy[] {
-    const strategies: LocatorStrategy[] = [];
 
-    // Check for aria-label
-    const ariaLabel = element.getAttribute('aria-label');
-    if (ariaLabel && ariaLabel.trim()) {
-      const selector = `[aria-label="${ariaLabel}"]`;
-      const isUnique = document.querySelectorAll(selector).length === 1;
-
-      strategies.push({
-        type: 'aria',
-        selector,
-        confidence: {
-          score: isUnique ? 80 : 60,
-          factors: [
-            {
-              factor: 'ARIA label',
-              impact: 'positive',
-              weight: 0.7,
-              description: 'ARIA labels provide good accessibility-based identification'
-            }
-          ],
-          warnings: isUnique ? [] : ['ARIA label is not unique on the page']
-        },
-        explanation: `Uses ARIA label "${ariaLabel}" for identification`,
-        isUnique,
-        isStable: true
-      });
-    }
-
-    // Check for role attribute
-    const role = element.getAttribute('role');
-    if (role && role.trim()) {
-      const selector = `[role="${role}"]`;
-      const isUnique = document.querySelectorAll(selector).length === 1;
-
-      strategies.push({
-        type: 'aria',
-        selector,
-        confidence: {
-          score: isUnique ? 60 : 30,
-          factors: [
-            {
-              factor: 'ARIA role',
-              impact: 'positive',
-              weight: 0.5,
-              description: 'ARIA roles provide semantic identification'
-            }
-          ],
-          warnings: isUnique ? [] : ['ARIA role is not unique on the page']
-        },
-        explanation: `Uses ARIA role "${role}" for identification`,
-        isUnique,
-        isStable: true
-      });
-    }
-
-    return strategies;
-  }
 }

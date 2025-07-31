@@ -15,6 +15,8 @@
  */
 
 import { LocatorStrategy } from '../shared/data-models';
+import { AriaAnalysisEngine } from '../shared/aria-analysis-engine';
+import { AriaLocatorGenerator } from '../shared/aria-locator-generator';
 import { logger } from '../shared/logger';
 
 /**
@@ -43,16 +45,28 @@ export type CopyCallback = (selector: string, type: string) => void;
 export class OnPagePopup {
   private keydownHandler: ((event: KeyboardEvent) => void) | null = null;
   private copyCallback: CopyCallback | null = null;
+  private ariaEngine: AriaAnalysisEngine;
+  private ariaGenerator: AriaLocatorGenerator;
+  private currentElement: HTMLElement | null = null;
+
+  constructor() {
+    this.ariaEngine = new AriaAnalysisEngine();
+    this.ariaGenerator = new AriaLocatorGenerator();
+  }
 
   /**
      * Shows the popup at the specified position with given locator strategies
      * 
      * @param position - Coordinates where to display the popup
      * @param strategies - Array of locator strategies to display
+     * @param element - The element being inspected (optional)
      */
-  public show(position: PopupPosition, strategies: LocatorStrategy[]): void {
+  public show(position: PopupPosition, strategies: LocatorStrategy[], element?: HTMLElement): void {
     // Remove existing popup if present
     this.hide();
+
+    // Store current element for ARIA functionality
+    this.currentElement = element || null;
 
     // Create popup container
     const container = document.createElement('div');
@@ -270,15 +284,25 @@ export class OnPagePopup {
     const ariaContent = document.createElement('div');
     ariaContent.className = 'locateflow-aria-content';
 
-    ariaContent.innerHTML = `
-      <div class="aria-section">
-        <h3>ARIA Snapshot</h3>
-        <p>Generate a detailed accessibility snapshot of the selected element.</p>
-        <button class="aria-button" data-action="generate-aria">
-          Generate ARIA Snapshot
-        </button>
-      </div>
+    // Generate ARIA locator suggestions if element is available
+    const ariaLocatorsSection = this.createAriaLocatorsSection();
+
+    // Create ARIA snapshot section
+    const snapshotSection = document.createElement('div');
+    snapshotSection.className = 'aria-section';
+    snapshotSection.innerHTML = `
+      <h3>ARIA Snapshot</h3>
+      <p>Generate a detailed accessibility snapshot of the selected element.</p>
+      <button class="aria-button" data-action="generate-aria">
+        Generate ARIA Snapshot
+      </button>
     `;
+
+    ariaContent.appendChild(ariaLocatorsSection);
+    ariaContent.appendChild(snapshotSection);
+
+    // Add event listener for ARIA snapshot generation
+    this.addAriaEventListeners(ariaContent);
 
     return ariaContent;
   }
@@ -326,14 +350,14 @@ export class OnPagePopup {
         let tabId = '';
 
         switch (tabNumber) {
-        case 1:
-          tabId = 'locators';
-          break;
-        case 2:
-          tabId = 'aria';
-          break;
-        default:
-          return; // Ignore other numbers for now
+          case 1:
+            tabId = 'locators';
+            break;
+          case 2:
+            tabId = 'aria';
+            break;
+          default:
+            return; // Ignore other numbers for now
         }
 
         // Find and click the corresponding tab
@@ -391,5 +415,127 @@ export class OnPagePopup {
     }
   }
 
+  /**
+     * Creates the ARIA locators section showing available ARIA-based selectors
+     * 
+     * @returns The ARIA locators section element
+     */
+  private createAriaLocatorsSection(): HTMLElement {
+    const section = document.createElement('div');
+    section.className = 'aria-locators-section';
+
+    if (!this.currentElement) {
+      section.innerHTML = '<p class="no-data">No element selected</p>';
+      return section;
+    }
+
+    try {
+      // Generate ARIA locator strategies for the current element
+      const ariaStrategies = this.ariaGenerator.generateAllAriaStrategies(this.currentElement);
+
+      if (ariaStrategies.length === 0) {
+        section.innerHTML = '<p class="no-data">No ARIA attributes found</p>';
+        return section;
+      }
+
+      // Create header
+      const header = document.createElement('h3');
+      header.textContent = 'ARIA Locators';
+      section.appendChild(header);
+
+      // Create locators list
+      const locatorsList = document.createElement('div');
+      locatorsList.className = 'aria-locators-list';
+
+      ariaStrategies.forEach(strategy => {
+        const locatorItem = document.createElement('div');
+        locatorItem.className = 'aria-locator-item';
+
+        const selectorSpan = document.createElement('span');
+        selectorSpan.className = 'aria-selector';
+        selectorSpan.textContent = strategy.selector;
+
+        const scoreSpan = document.createElement('span');
+        scoreSpan.className = 'aria-confidence-score';
+        scoreSpan.textContent = `${strategy.confidence.score}%`;
+
+        const copyButton = document.createElement('button');
+        copyButton.className = 'aria-copy-button';
+        copyButton.textContent = 'Copy';
+        copyButton.dataset.selector = strategy.selector;
+        copyButton.dataset.type = 'aria';
+
+        locatorItem.appendChild(selectorSpan);
+        locatorItem.appendChild(scoreSpan);
+        locatorItem.appendChild(copyButton);
+
+        locatorsList.appendChild(locatorItem);
+      });
+
+      section.appendChild(locatorsList);
+
+      // Add click handler for copy buttons
+      locatorsList.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement;
+        if (target.classList.contains('aria-copy-button')) {
+          const selector = target.dataset.selector;
+          const type = target.dataset.type;
+          if (selector && type && this.copyCallback) {
+            this.copyCallback(selector, type);
+          }
+        }
+      });
+
+    } catch (error) {
+      logger.warn('Failed to generate ARIA locators:', error);
+      section.innerHTML = '<p class="error">Failed to generate ARIA locators</p>';
+    }
+
+    return section;
+  }
+
+  /**
+     * Adds event listeners for ARIA functionality
+     * 
+     * @param ariaContent - The ARIA content container
+     */
+  private addAriaEventListeners(ariaContent: HTMLElement): void {
+    ariaContent.addEventListener('click', (event) => {
+      const target = event.target as HTMLElement;
+
+      if (target.dataset.action === 'generate-aria') {
+        this.handleAriaSnapshotGeneration();
+      }
+    });
+  }
+
+  /**
+     * Handles ARIA snapshot generation and display
+     */
+  private handleAriaSnapshotGeneration(): void {
+    if (!this.currentElement) {
+      logger.warn('No element available for ARIA snapshot generation');
+      return;
+    }
+
+    try {
+      // Generate ARIA snapshot
+      const snapshot = this.ariaGenerator.generateAriaSnapshot(this.currentElement);
+
+      // Display snapshot in new window
+      this.ariaEngine.displaySnapshotInNewWindow(snapshot);
+    } catch (error) {
+      logger.error('Failed to generate ARIA snapshot:', error);
+    }
+  }
+
+  /**
+     * Public method for testing ARIA snapshot generation
+     * @param element - Element to generate snapshot for
+     */
+  public generateAriaSnapshotForTesting(element: HTMLElement): void {
+    this.currentElement = element;
+    this.handleAriaSnapshotGeneration();
+  }
 
 }

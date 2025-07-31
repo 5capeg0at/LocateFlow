@@ -200,16 +200,16 @@ export class InspectionModeManager {
   private handleMessage(message: any, _sender: any, sendResponse: any): void {
     try {
       switch (message.type) {
-        case 'ACTIVATE_INSPECTION_MODE':
-          this.activateInspectionMode();
-          sendResponse({ success: true });
-          break;
-        case 'DEACTIVATE_INSPECTION_MODE':
-          this.deactivateInspectionMode();
-          sendResponse({ success: true });
-          break;
-        default:
-          sendResponse({ success: false, error: 'Unknown message type' });
+      case 'ACTIVATE_INSPECTION_MODE':
+        this.activateInspectionMode();
+        sendResponse({ success: true });
+        break;
+      case 'DEACTIVATE_INSPECTION_MODE':
+        this.deactivateInspectionMode();
+        sendResponse({ success: true });
+        break;
+      default:
+        sendResponse({ success: false, error: 'Unknown message type' });
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';

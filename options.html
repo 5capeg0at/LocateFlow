@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocateFlow Options</title>
+    <link rel="stylesheet" href="src/options/options.css">
+</head>
+
+<body>
+    <div id="options-container" class="options-container">
+        <header class="options-header">
+            <h1>LocateFlow Settings</h1>
+        </header>
+
+        <main class="options-main responsive">
+            <form role="form" aria-label="Extension Settings">
+                <!-- Theme Selection -->
+                <fieldset class="theme-selection" role="radiogroup" aria-labelledby="theme-legend">
+                    <legend id="theme-legend">Theme</legend>
+                    <div class="radio-group">
+                        <input type="radio" id="theme-light" name="theme" value="light">
+                        <label for="theme-light">Light</label>
+                    </div>
+                    <div class="radio-group">
+                        <input type="radio" id="theme-dark" name="theme" value="dark">
+                        <label for="theme-dark">Dark</label>
+                    </div>
+                    <div class="radio-group">
+                        <input type="radio" id="theme-auto" name="theme" value="auto">
+                        <label for="theme-auto">Auto (System)</label>
+                    </div>
+                </fieldset>
+
+                <!-- Theme Preview -->
+                <div class="theme-preview">
+                    <div class="preview-title">Preview</div>
+                    <div class="preview-content">
+                        <div class="preview-card">
+                            <p>This is how the extension will look with the selected theme.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Settings -->
+                <fieldset class="history-settings">
+                    <legend>History Settings</legend>
+                    <div class="form-group">
+                        <label for="history-limit">History Limit</label>
+                        <input type="number" id="history-limit" name="historyLimit" min="1" max="1000" required>
+                    </div>
+                </fieldset>
+
+                <!-- Additional Preferences -->
+                <fieldset class="additional-preferences">
+                    <legend>Additional Preferences</legend>
+
+                    <div class="form-group">
+                        <input type="checkbox" id="show-confidence-explanations" name="showConfidenceExplanations">
+                        <label for="show-confidence-explanations">Show confidence explanations</label>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="checkbox" id="enable-screenshots" name="enableScreenshots">
+                        <label for="enable-screenshots">Enable screenshots</label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="highlight-color">Highlight Color</label>
+                        <input type="color" id="highlight-color" name="highlightColor" pattern="^#[0-9a-fA-F]{6}$"
+                            required>
+                    </div>
+                </fieldset>
+
+                <!-- Validation Errors -->
+                <div class="validation-errors hidden"></div>
+
+                <!-- Action Buttons -->
+                <div class="form-actions">
+                    <button type="submit" class="save-button btn btn-primary">Save Settings</button>
+                    <button type="button" class="reset-button btn btn-secondary">Reset to Defaults</button>
+                    <button type="button" class="export-button btn btn-secondary">Export Settings</button>
+                    <button type="button" class="import-button btn btn-secondary">Import Settings</button>
+                    <input type="file" class="import-file-input" accept=".json" style="display: none;">
+                </div>
+            </form>
+        </main>
+
+        <footer class="options-footer">
+            <p>&copy; 2025 LocateFlow Chrome Extension</p>
+        </footer>
+    </div>
+
+    <script src="src/options/options.js"></script>
+</body>
+
+</html>

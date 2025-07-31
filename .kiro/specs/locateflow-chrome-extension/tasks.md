@@ -297,27 +297,44 @@ This implementation leverages automated hooks to minimize token usage and ensure
   - Implement auto theme detection based on system preferences
   - _Requirements: 5.7, 6.1, 6.2, 6.4_
 
-- [ ] 8. Create options page for advanced settings with TDD
-- [ ] 8.1 Implement options page HTML and styling with failing tests
+- [x] 8. Create options page for advanced settings with TDD
+- [x] 8.1 Implement options page HTML and styling with failing tests
+
+
+
+
+
   - Write failing tests for options page layout and form controls
   - Test-drive preference form creation with validation
   - Implement theme selection with live preview functionality
   - _Requirements: 6.1, 6.2, 6.3_
 
-- [ ] 8.2 Implement advanced preference management with TDD
+- [x] 8.2 Implement advanced preference management with TDD
+
+
+
+
+
+
   - Write failing tests for advanced settings like history limit and highlight color
   - Test-drive preference validation and storage integration
   - Implement settings import/export functionality for user convenience
   - _Requirements: 6.3_
 
-- [ ] 9. Implement ARIA snapshot functionality with TDD
-- [ ] 9.1 Create ARIA analysis engine with failing tests
+- [x] 9. Implement ARIA snapshot functionality with TDD
+- [x] 9.1 Create ARIA analysis engine with failing tests
+
+
+
   - Write failing tests for ARIA attribute detection and analysis
   - Test-drive ARIA snapshot generation with detailed accessibility information
   - Implement ARIA snapshot display in new browser window/tab
   - _Requirements: 4.3, 4.4_
 
-- [ ] 9.2 Integrate ARIA functionality with main workflow with TDD
+- [x] 9.2 Integrate ARIA functionality with main workflow with TDD
+
+
+
   - Write failing tests for ARIA tab integration in on-page popup
   - Test-drive ARIA locator suggestions in main locators tab
   - Implement ARIA-focused confidence scoring adjustments
@@ -1015,3 +1032,119 @@ This implementation leverages automated hooks to minimize token usage and ensure
 - Error logging patterns are now consistent across all components
 - Ready for next phase of development (Options page implementation - Task 8)
 - All quality gates met: tests passing, linting clean, ADR compliant
+-
+--
+
+### Task 9.1: Create ARIA analysis engine with failing tests
+**Status:** ✅ Completed  
+**Date:** 2025-01-31
+
+#### TDD Cycle Summary:
+- **RED Phase:** Created 17 failing tests defining ARIA snapshot display, accessibility analysis, and export functionality
+- **GREEN Phase:** Implemented `AriaAnalysisEngine` class with minimal code to pass all tests
+- **REFACTOR Phase:** Enhanced documentation, created ADR-011, and improved code organization
+
+#### Requirements Traceability:
+- ✅ Requirement 4.3: ARIA snapshot generation option in ARIA tab
+- ✅ Requirement 4.4: ARIA snapshot display in new browser window/tab
+- ✅ Accessibility analysis with compliance scoring and recommendations
+- ✅ Export functionality for JSON and CSV formats
+
+#### Architecture Decisions:
+- **Separation of Concerns:** Clear distinction between locator generation (AriaLocatorGenerator) and analysis/display (AriaAnalysisEngine)
+- **New Window Management:** Uses `window.open()` with specific dimensions and features for dedicated ARIA analysis environment
+- **HTML Template System:** Complete HTML document generation with embedded CSS and JavaScript for professional presentation
+- **Accessibility Analysis:** 0-100 scoring system with issue detection and actionable recommendations
+- **Export Integration:** Client-side file generation using Blob API for JSON and CSV export
+
+#### Implementation Details:
+- **Core Class:** `AriaAnalysisEngine` with comprehensive ARIA analysis and display capabilities
+- **Key Methods:**
+  - `displaySnapshotInNewWindow()` - Opens new window with formatted ARIA snapshot
+  - `generateSnapshotHTML()` - Creates complete HTML document with styling and interactivity
+  - `analyzeAccessibility()` - Provides accessibility compliance analysis with scoring
+  - `exportSnapshotAsJSON()` - Generates structured JSON export of snapshot data
+  - `exportSnapshotAsCSV()` - Creates tabular CSV format for ARIA attributes
+- **HTML Features:** Responsive design, professional styling, interactive export buttons, error handling
+- **Analysis Features:** Missing accessible name detection, ARIA attribute validation, role hierarchy checking
+- **Error Handling:** Window creation failures, content writing errors, malformed data handling
+
+#### Quality Metrics:
+- **Test Coverage:** 98.46% statement coverage, 96.66% branch coverage, 100% function coverage (exceeds all requirements)
+- **Tests:** 17/17 passing with comprehensive edge case coverage including error scenarios
+- **Code Quality:** ESLint compliant, follows SOLID principles with clean separation of concerns
+- **Error Handling:** Robust validation and graceful degradation for all failure scenarios
+
+#### Files Created:
+- `src/shared/aria-analysis-engine.ts` - ARIA analysis and snapshot display engine
+- `__tests__/shared/aria-analysis-engine.test.ts` - Comprehensive test suite with 17 test cases
+- `docs/adr/ADR-011-aria-analysis-engine.md` - Architecture decision record
+
+#### Next Agent Context:
+- ARIA analysis engine complete with new window display and accessibility analysis
+- Integrates with existing AriaLocatorGenerator through AriaSnapshot interface
+- Ready for integration with main workflow (Task 9.2)
+- Export functionality provides data portability for users
+
+---
+
+### Task 9.2: Integrate ARIA functionality with main workflow with TDD
+**Status:** ✅ Completed  
+**Date:** 2025-01-31
+
+#### TDD Cycle Summary:
+- **RED Phase:** Created 15 failing tests defining ARIA tab integration, locator suggestions, and confidence scoring
+- **GREEN Phase:** Implemented minimal code to integrate ARIA analysis engine with on-page popup and element selector
+- **REFACTOR Phase:** Enhanced error handling, added testing utilities, and improved code organization
+
+#### Requirements Traceability:
+- ✅ Requirement 4.1: ARIA tab integration in on-page popup with locator suggestions and snapshot generation
+- ✅ Requirement 4.2: ARIA locator suggestions in main locators tab with enhanced confidence scoring
+- ✅ ARIA-focused confidence scoring adjustments using full AriaLocatorGenerator capabilities
+- ✅ Seamless integration between ARIA analysis engine and main workflow components
+
+#### Architecture Decisions:
+- **Enhanced OnPagePopup:** Integrated AriaAnalysisEngine and AriaLocatorGenerator for comprehensive ARIA functionality
+- **Element Selector Integration:** Replaced basic ARIA locator generation with full AriaLocatorGenerator capabilities
+- **ARIA Tab Enhancement:** Added ARIA locator suggestions display alongside snapshot generation functionality
+- **Event Handling:** Implemented proper event delegation for ARIA snapshot generation with error handling
+- **Testing Strategy:** Created comprehensive integration tests with proper mocking of internal instances
+
+#### Implementation Details:
+- **OnPagePopup Enhancements:**
+  - Added `AriaAnalysisEngine` and `AriaLocatorGenerator` instances
+  - Enhanced `show()` method to accept current element for ARIA functionality
+  - Created `createAriaLocatorsSection()` for displaying ARIA-based selectors
+  - Implemented `handleAriaSnapshotGeneration()` for snapshot creation and display
+  - Added `generateAriaSnapshotForTesting()` public method for testing integration
+- **ElementSelector Integration:**
+  - Replaced basic ARIA locator methods with full `AriaLocatorGenerator.generateAllAriaStrategies()`
+  - Enhanced error handling for ARIA locator generation failures
+  - Improved confidence scoring through comprehensive ARIA analysis
+- **ARIA Tab Features:**
+  - Dynamic ARIA locator suggestions with confidence scores and copy functionality
+  - ARIA snapshot generation button with proper event handling
+  - Graceful handling of elements without ARIA attributes
+  - Integration with existing copy callback system
+
+#### Quality Metrics:
+- **Test Coverage:** 15/15 integration tests passing with comprehensive workflow coverage
+- **Integration Testing:** Full workflow testing from element selection to ARIA analysis
+- **Error Handling:** Robust error handling for missing elements, generation failures, and edge cases
+- **Code Quality:** Clean integration following existing architectural patterns
+
+#### Files Created:
+- `__tests__/content/aria-integration.test.ts` - Comprehensive integration test suite with 15 test cases
+
+#### Files Modified:
+- `src/content/on-page-popup.ts` - Enhanced with ARIA analysis engine integration
+- `src/content/element-selector.ts` - Integrated full AriaLocatorGenerator capabilities
+
+#### Next Agent Context:
+- ARIA functionality fully integrated with main workflow
+- On-page popup displays ARIA locators and enables snapshot generation
+- Element selector generates comprehensive ARIA locators with enhanced confidence scoring
+- Ready for comprehensive error handling and logging implementation (Task 10.1)
+- All ARIA requirements (4.1, 4.2, 4.3, 4.4) successfully implemented and integrated
+- Professional HTML presentation suitable for documentation and sharing
+- Foundation established for ARIA tab integration in on-page popup
